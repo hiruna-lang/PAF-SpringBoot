@@ -1,13 +1,16 @@
 server:
   port: 8090
 
+
 spring:
   application:
     name: backend
   datasource:
-    url: jdbc:mysql://localhost:3306/WorkLancer?createDatabaseIfNotExist=true
+    # මෙතන Database name එක smart_campus_db ලෙස වෙනස් කර ඇත
+    url: jdbc:mysql://localhost:3306/smart_campus_db?createDatabaseIfNotExist=true
     username: root
-    password: Awantha65@
+    # ඔයාගේ අලුත් password එක මෙතනට දාන්න
+    password: 12345
   jpa:
     hibernate:
       ddl-auto: update
