@@ -27,11 +27,11 @@ export function AuthProvider({ children }) {
   }, []);
 
   const switchRole = useCallback((role) => {
-    setAuth((current) => ({
-      token: current?.token || `demo-${role.toLowerCase()}-token`,
+    setAuth({
+      token: `demo-${role.toLowerCase()}-token`,
       role,
       user: DEMO_PROFILES[role],
-    }));
+    });
   }, []);
 
   const logout = useCallback(() => {
