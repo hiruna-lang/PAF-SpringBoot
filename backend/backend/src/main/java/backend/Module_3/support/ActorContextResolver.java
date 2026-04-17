@@ -17,7 +17,21 @@ public class ActorContextResolver {
                 case "demo-user-token" -> new ActorContext("user-100", "Nethmi Perera", UserRole.USER);
                 case "demo-admin-token" -> new ActorContext("admin-200", "Ayesha Fernando", UserRole.ADMIN);
                 case "demo-technician-token" -> new ActorContext("tech-300", "Ishan Silva", UserRole.TECHNICIAN);
-                default -> new ActorContext(token, "External User", UserRole.USER);
+                default -> {
+                    String userId = request.getHeader("X-User-Id");
+                    String userName = request.getHeader("X-User-Name");
+                    String roleValue = request.getHeader("X-User-Role");
+
+                    UserRole role = UserRole.USER;
+                    if (StringUtils.hasText(roleValue)) {
+                        role = UserRole.valueOf(roleValue.trim().toUpperCase());
+                    }
+
+                    yield new ActorContext(
+                        StringUtils.hasText(userId) ? userId : token,
+                        StringUtils.hasText(userName) ? userName : "External User",
+                        role);
+                }
             };
         }
 
