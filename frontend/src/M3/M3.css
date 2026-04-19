@@ -1,20 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Syne:wght@700;800&display=swap");
 
 :root {
-  --m3-bg: #eef4f8;
-  --m3-surface: rgba(255, 255, 255, 0.88);
-  --m3-surface-strong: #ffffff;
-  --m3-border: rgba(16, 24, 40, 0.08);
-  --m3-text: #0f172a;
-  --m3-muted: #5c6b82;
-  --m3-primary: #0f766e;
-  --m3-primary-dark: #0b5d57;
-  --m3-accent: #0ea5a4;
+  --m3-bg: transparent;
+  --m3-surface: rgba(30, 41, 59, 0.88);
+  --m3-surface-strong: #1e293b;
+  --m3-border: rgba(255, 255, 255, 0.08);
+  --m3-text: #f8fafc;
+  --m3-muted: #94a3b8;
+  --m3-primary: #2563eb;
+  --m3-primary-dark: #0a1628;
+  --m3-accent: #06b6d4;
   --m3-danger: #dc2626;
   --m3-warning: #ea580c;
-  --m3-info: #2563eb;
+  --m3-info: #06b6d4;
   --m3-success: #16a34a;
-  --m3-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+  --m3-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   --m3-radius-xl: 28px;
   --m3-radius-lg: 22px;
   --m3-radius-md: 16px;
@@ -28,10 +28,11 @@ body {
   margin: 0;
   font-family: "Manrope", "Segoe UI", sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(14, 165, 164, 0.22), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.18), transparent 24%),
-    var(--m3-bg);
+    radial-gradient(circle at top left, rgba(6, 182, 212, 0.15), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.15), transparent 24%),
+    linear-gradient(135deg, #0f172a, #1e293b);
   color: var(--m3-text);
+  min-height: 100vh;
 }
 
 a {
@@ -61,12 +62,12 @@ button {
   top: 0;
   height: 100vh;
   padding: 28px 22px;
-  background: rgba(10, 20, 40, 0.96);
-  color: #e6efff;
+  background: rgba(10, 22, 40, 0.96);
+  color: #f8fafc;
   display: flex;
   flex-direction: column;
   gap: 28px;
-  box-shadow: 30px 0 80px rgba(15, 23, 42, 0.18);
+  box-shadow: 30px 0 80px rgba(0, 0, 0, 0.3);
   z-index: 30;
 }
 
@@ -104,7 +105,7 @@ button {
 
 .m3-nav-link:hover,
 .m3-nav-link.active {
-  background: linear-gradient(135deg, rgba(14, 165, 164, 0.28), rgba(37, 99, 235, 0.32));
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.32), rgba(6, 182, 212, 0.28));
   color: #ffffff;
 }
 
@@ -196,9 +197,9 @@ button {
   justify-content: space-between;
   gap: 24px;
   background:
-    linear-gradient(135deg, rgba(15, 118, 110, 0.92), rgba(37, 99, 235, 0.88)),
+    linear-gradient(135deg, rgba(37, 99, 235, 0.92), rgba(6, 182, 212, 0.88)),
     var(--m3-surface-strong);
-  color: #f8fbff;
+  color: #f8fafc;
 }
 
 .m3-hero-card h2 {
@@ -871,6 +872,7 @@ button {
 }
 
 @media (max-width: 1200px) {
+
   .m3-metric-grid,
   .m3-access__roles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -915,6 +917,7 @@ button {
 }
 
 @media (max-width: 720px) {
+
   .m3-content,
   .m3-access {
     padding: 18px;
@@ -1166,7 +1169,7 @@ body {
   color: rgba(248, 250, 252, 0.7);
 }
 
-.m3-hero-card__panel > strong {
+.m3-hero-card__panel>strong {
   font-size: 1.15rem;
   line-height: 1.4;
 }
@@ -1444,7 +1447,7 @@ body {
   box-shadow: 0 16px 30px rgba(148, 163, 184, 0.1);
 }
 
-.m3-comment-bubble__meta > div {
+.m3-comment-bubble__meta>div {
   display: grid;
   gap: 4px;
 }
@@ -1571,8 +1574,8 @@ body {
   width: fit-content;
 }
 
-.m3-page-stack > *,
-.m3-access > * {
+.m3-page-stack>*,
+.m3-access>* {
   animation: m3-fade-up 0.45s ease both;
 }
 
@@ -1628,6 +1631,7 @@ body {
 }
 
 @media (max-width: 720px) {
+
   .m3-hero-card,
   .m3-access__hero,
   .m3-access__signal-card,
@@ -1705,13 +1709,11 @@ body {
 .m3-hero-card--editorial::before {
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 16%),
-    repeating-linear-gradient(
-      90deg,
+    repeating-linear-gradient(90deg,
       rgba(255, 255, 255, 0.04) 0,
       rgba(255, 255, 255, 0.04) 1px,
       transparent 1px,
-      transparent 92px
-    );
+      transparent 92px);
   opacity: 0.9;
 }
 
