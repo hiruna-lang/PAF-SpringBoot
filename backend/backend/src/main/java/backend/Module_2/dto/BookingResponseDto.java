@@ -15,14 +15,23 @@ import java.time.LocalTime;
 public class BookingResponseDto {
 
     private Long id;
+
     private Long resourceId;
     private String resourceName;
+    private String resourceType;
+    private Integer resourceCapacity;
+    private String resourceLocation;
+    private String resourceStatus;
+
+    private String userId;
     private String userEmail;
+
     private LocalDate bookingDate;
     private LocalTime startTime;
     private LocalTime endTime;
     private String purpose;
     private Integer expectedAttendees;
+
     private BookingStatus status;
     private String adminReason;
     private LocalDateTime createdAt;
