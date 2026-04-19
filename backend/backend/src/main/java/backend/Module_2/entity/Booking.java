@@ -46,6 +46,7 @@ public class Booking {
     @Column(nullable = false)
     private BookingStatus status;
 
+    @Column(length = 500)
     private String adminReason;
 
     @Column(nullable = false, updatable = false)
