@@ -68,8 +68,7 @@ public class BookingServiceImpl implements BookingService {
                 .status(BookingStatus.PENDING)
                 .build();
 
-        Booking savedBooking = bookingRepository.save(booking);
-        return mapToResponse(savedBooking);
+        return mapToResponse(bookingRepository.save(booking));
     }
 
     @Override
@@ -160,8 +159,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(newStatus);
         booking.setAdminReason(dto.getAdminReason());
 
-        Booking updatedBooking = bookingRepository.save(booking);
-        return mapToResponse(updatedBooking);
+        return mapToResponse(bookingRepository.save(booking));
     }
 
     @Override
