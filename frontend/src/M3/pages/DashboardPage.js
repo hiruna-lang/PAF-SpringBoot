@@ -19,12 +19,6 @@ export default function DashboardPage() {
   return (
     <div className="m3-page-stack">
       <section className="m3-hero-card m3-hero-card--editorial">
-        <div className="m3-hero-card__rail">
-          <span>LIVE OPS</span>
-          <span>QUEUE VIEW</span>
-          <span>{role}</span>
-        </div>
-
         <div className="m3-hero-card__headline">
           <span className="m3-hero-card__kicker">Campus Service Grid</span>
           <h2>
