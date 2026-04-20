@@ -5,6 +5,7 @@ import backend.Module_4.Auth.oauth2.OAuth2SuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity   // enables @PreAuthorize on controllers
 public class SecurityConfig {
 
     @Autowired
@@ -41,14 +43,21 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
+                // ── Public ──────────────────────────────────────────────
                 .requestMatchers(
                     "/api/auth/register",
                     "/api/auth/login",
                     "/oauth2/**",
                     "/login/oauth2/**"
                 ).permitAll()
-                // Everything else requires a valid JWT
+
+                // ── Admin only ───────────────────────────────────────────
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                // ── Admin + Manager ──────────────────────────────────────
+                .requestMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER")
+
+                // ── Any authenticated user ───────────────────────────────
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
