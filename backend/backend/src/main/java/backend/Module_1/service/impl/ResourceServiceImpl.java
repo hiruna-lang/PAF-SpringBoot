@@ -1,5 +1,7 @@
 package backend.Module_1.service.impl;
 
+import backend.Module_1.enums.ResourceStatus;
+import backend.Module_1.enums.ResourceType;
 import backend.Module_1.exception.ResourceNotFoundException;
 import backend.Module_1.model.Resource;
 import backend.Module_1.repository.ResourceRepository;
@@ -51,5 +53,25 @@ public class ResourceServiceImpl implements ResourceService {
     public void deleteResource(Long id) {
         Resource existingResource = getResourceById(id);
         resourceRepository.delete(existingResource);
+    }
+
+    @Override
+    public List<Resource> getResourcesByType(ResourceType type) {
+        return resourceRepository.findByType(type);
+    }
+
+    @Override
+    public List<Resource> getResourcesByLocation(String location) {
+        return resourceRepository.findByLocationContainingIgnoreCase(location);
+    }
+
+    @Override
+    public List<Resource> getResourcesByMinCapacity(Integer capacity) {
+        return resourceRepository.findByCapacityGreaterThanEqual(capacity);
+    }
+
+    @Override
+    public List<Resource> getResourcesByStatus(ResourceStatus status) {
+        return resourceRepository.findByStatus(status);
     }
 }
