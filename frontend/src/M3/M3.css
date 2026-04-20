@@ -417,6 +417,13 @@ button {
   border: 1px solid rgba(30, 58, 138, 0.2);
 }
 
+.m3-hero-card .m3-secondary-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+}
+
 .m3-danger-button {
   background: rgba(220, 38, 38, 0.08);
   color: var(--m3-danger);
@@ -433,6 +440,11 @@ button {
 .m3-danger-button:hover,
 .m3-icon-button:hover {
   transform: translateY(-1px);
+}
+
+.m3-hero-card .m3-secondary-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .m3-primary-button:disabled,
