@@ -1,5 +1,7 @@
 package backend.Module_1.controller;
 
+import backend.Module_1.enums.ResourceStatus;
+import backend.Module_1.enums.ResourceType;
 import backend.Module_1.model.Resource;
 import backend.Module_1.service.ResourceService;
 import org.springframework.web.bind.annotation.*;
@@ -41,5 +43,25 @@ public class ResourceController {
     public String deleteResource(@PathVariable Long id) {
         resourceService.deleteResource(id);
         return "Resource deleted successfully";
+    }
+
+    @GetMapping("/type/{type}")
+    public List<Resource> getResourcesByType(@PathVariable ResourceType type) {
+        return resourceService.getResourcesByType(type);
+    }
+
+    @GetMapping("/location/{location}")
+    public List<Resource> getResourcesByLocation(@PathVariable String location) {
+        return resourceService.getResourcesByLocation(location);
+    }
+
+    @GetMapping("/capacity/{capacity}")
+    public List<Resource> getResourcesByMinCapacity(@PathVariable Integer capacity) {
+        return resourceService.getResourcesByMinCapacity(capacity);
+    }
+
+    @GetMapping("/status/{status}")
+    public List<Resource> getResourcesByStatus(@PathVariable ResourceStatus status) {
+        return resourceService.getResourcesByStatus(status);
     }
 }
