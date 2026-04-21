@@ -27,6 +27,9 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.USER; // default role
 
+    @Column(columnDefinition = "LONGTEXT")
+    private String photoUrl; // profile photo — base64 data URL or Google CDN URL
+
     public User() {}
 
     // Getters & Setters
@@ -54,4 +57,7 @@ public class User {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
 }
