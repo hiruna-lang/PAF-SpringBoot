@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ResourceFilters from "../components/ResourceFilters";
 import ResourceTable from "../components/ResourceTable";
 import {
@@ -20,7 +20,7 @@ function ViewResources({ setCurrentPage, setSelectedResource }) {
   const setSuccess = (text) => setMessage({ type: "success", text });
   const setError = (text) => setMessage({ type: "error", text });
 
-  const loadAllResources = async () => {
+  const loadAllResources = useCallback(async () => {
     setLoading(true);
     setMessage({ type: "", text: "" });
     try {
@@ -33,29 +33,21 @@ function ViewResources({ setCurrentPage, setSelectedResource }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    loadAllResources();
   }, []);
+
+  useEffect(() => { loadAllResources(); }, [loadAllResources]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (!activeFilter) {
-        loadAllResources();
-      }
+      if (!activeFilter) loadAllResources();
     }, 30000);
     return () => clearInterval(intervalId);
-  }, [activeFilter]);
+  }, [activeFilter, loadAllResources]);
 
   useEffect(() => {
-    if (message.type !== "success") {
-      return undefined;
-    }
-    const timeoutId = setTimeout(() => {
-      setMessage({ type: "", text: "" });
-    }, 3000);
-    return () => clearTimeout(timeoutId);
+    if (message.type !== "success") return undefined;
+    const id = setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+    return () => clearTimeout(id);
   }, [message.type]);
 
   const handleFilter = async (fetcher, value, filterType) => {
@@ -75,11 +67,7 @@ function ViewResources({ setCurrentPage, setSelectedResource }) {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Delete this resource?");
-    if (!confirmed) {
-      return;
-    }
-
+    if (!window.confirm("Delete this resource?")) return;
     setLoading(true);
     setMessage({ type: "", text: "" });
     try {
@@ -98,65 +86,43 @@ function ViewResources({ setCurrentPage, setSelectedResource }) {
     setCurrentPage("update");
   };
 
-  const messageStyles =
-    message.type === "success"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-      : "border-red-200 bg-red-50 text-red-700";
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="m1-page">
+      <div className="m1-page-header">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-900">View Resources</h2>
-          <p className="text-sm text-slate-500">
-            Browse, filter, and manage all resources.
-          </p>
+          <h2 className="m1-page-title">View Resources</h2>
+          <p className="m1-page-sub">Browse, filter, and manage all resources.</p>
         </div>
-        <button
-          onClick={() => setCurrentPage("create")}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-        >
+        <button className="m1-btn-primary" onClick={() => setCurrentPage("create")}>
           Add Resource
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+      <div className="m1-meta">
         <span>
           Auto-refresh every 30 seconds
           {lastUpdated && (
-            <span className="ml-2 text-slate-400">
+            <span className="m1-meta-muted">
               Updated {lastUpdated.toLocaleTimeString()}
             </span>
           )}
         </span>
         {activeFilter && (
-          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-            Filter: {activeFilter.type}
-          </span>
+          <span className="m1-filter-badge">Filter: {activeFilter.type}</span>
         )}
       </div>
 
       <ResourceFilters
-        onFilterByType={(value) =>
-          handleFilter(getResourcesByType, value, "type")
-        }
-        onFilterByLocation={(value) =>
-          handleFilter(getResourcesByLocation, value, "location")
-        }
-        onFilterByCapacity={(value) =>
-          handleFilter(getResourcesByCapacity, value, "capacity")
-        }
-        onFilterByStatus={(value) =>
-          handleFilter(getResourcesByStatus, value, "status")
-        }
+        onFilterByType={(v) => handleFilter(getResourcesByType, v, "type")}
+        onFilterByLocation={(v) => handleFilter(getResourcesByLocation, v, "location")}
+        onFilterByCapacity={(v) => handleFilter(getResourcesByCapacity, v, "capacity")}
+        onFilterByStatus={(v) => handleFilter(getResourcesByStatus, v, "status")}
         onReset={loadAllResources}
         autoReset
       />
 
       {message.text && (
-        <div className={`rounded-xl border px-4 py-2 text-sm ${messageStyles}`}>
-          {message.text}
-        </div>
+        <div className={`m1-alert ${message.type}`}>{message.text}</div>
       )}
 
       <ResourceTable
