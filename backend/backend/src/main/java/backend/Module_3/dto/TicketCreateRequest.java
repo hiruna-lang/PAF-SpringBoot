@@ -14,8 +14,8 @@ import jakarta.validation.constraints.Size;
 
 public class TicketCreateRequest {
 
-    private static final Pattern CONTACT_PATTERN = Pattern.compile(
-            "^(?:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}|[0-9+()\\-\\s]{7,20})$");
+    // 🔥 Only 10 digits allowed
+    private static final Pattern CONTACT_PATTERN = Pattern.compile("^[0-9]{10}$");
 
     @NotBlank(message = "Resource or location is required.")
     @Size(max = 120, message = "Resource or location must be 120 characters or fewer.")
@@ -39,13 +39,25 @@ public class TicketCreateRequest {
     @Size(max = 3, message = "Only 3 attachments are allowed.")
     private List<MultipartFile> attachments = new ArrayList<>();
 
-    @AssertTrue(message = "Preferred contact must be a valid phone number or email address.")
+    // 🔥 Phone validation
+    @AssertTrue(message = "Phone number must contain exactly 10 digits.")
     public boolean isPreferredContactValid() {
         if (preferredContact == null || preferredContact.isBlank()) {
-            return true;
+            return false;
         }
         return CONTACT_PATTERN.matcher(preferredContact.trim()).matches();
     }
+
+    // 🔥 Description validation (no special characters)
+    @AssertTrue(message = "Description cannot contain special characters.")
+    public boolean isDescriptionValid() {
+        if (description == null || description.isBlank()) {
+            return true;
+        }
+        return description.matches("^[a-zA-Z0-9 ]*$");
+    }
+
+    // getters & setters
 
     public String getResource() {
         return resource;
