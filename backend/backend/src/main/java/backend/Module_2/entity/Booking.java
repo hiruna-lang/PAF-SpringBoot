@@ -1,58 +1,69 @@
 package backend.Module_2.entity;
 
-import backend.Module_2.enums.BookingStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Entity
-@Table(name = "bookings")
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Entity
+@Table(name = "bookings")
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    private Long userId;
+
     private Long resourceId;
 
-    @Column(nullable = false)
-    private String userEmail;
+    private LocalDate date;
 
-    @Column(nullable = false)
-    private LocalDate bookingDate;
-
-    @Column(nullable = false)
     private LocalTime startTime;
 
-    @Column(nullable = false)
     private LocalTime endTime;
 
-    @Column(nullable = false, length = 500)
     private String purpose;
 
-    private Integer expectedAttendees;
+    private int expectedAttendees;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private BookingStatus status;
 
-    @Column(length = 500)
     private String adminReason;
 
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    private LocalDateTime updatedAt;
+
     @PrePersist
-    public void prePersist() {
+    protected void onCreate() {
+        if (this.status == null) {
+            this.status = BookingStatus.PENDING;
+        }
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
