@@ -46,7 +46,7 @@ public class UserService {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
         return new AuthResponse(token, user.getEmail(), user.getName(),
-                user.getProvider(), user.getRole().name());
+                user.getProvider(), user.getRole().name(), user.getPhotoUrl());
     }
 
     /** Login with email + password */
@@ -64,7 +64,7 @@ public class UserService {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
         return new AuthResponse(token, user.getEmail(), user.getName(),
-                user.getProvider(), user.getRole().name());
+                user.getProvider(), user.getRole().name(), user.getPhotoUrl());
     }
 
     /** Get all users — ADMIN only */
@@ -78,5 +78,23 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(newRole);
         return userRepository.save(user);
+    }
+
+    /** Save profile photo (base64 data URL) for the authenticated user */
+    public AuthResponse updatePhoto(String email, String photoUrl) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setPhotoUrl(photoUrl);
+        userRepository.save(user);
+        // Return fresh AuthResponse so frontend can update stored user object
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+        return new AuthResponse(token, user.getEmail(), user.getName(),
+                user.getProvider(), user.getRole().name(), user.getPhotoUrl());
+    }
+
+    /** Get current user profile by email */
+    public User getProfile(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
