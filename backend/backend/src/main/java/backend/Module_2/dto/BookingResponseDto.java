@@ -1,6 +1,6 @@
 package backend.Module_2.dto;
 
-import backend.Module_2.enums.BookingStatus;
+
 import lombok.*;
 
 import java.time.LocalDate;
