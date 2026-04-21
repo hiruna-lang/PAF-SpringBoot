@@ -26,7 +26,7 @@ export function loginWithGoogle() {
   window.location.href = "http://localhost:8081/oauth2/authorization/google";
 }
 
-/** Persist auth data — now includes role */
+/** Persist auth data — now includes role and photoUrl */
 export function saveAuth(authResponse) {
   localStorage.setItem("token", authResponse.token);
   localStorage.setItem("loginTime", Date.now().toString());
@@ -37,8 +37,49 @@ export function saveAuth(authResponse) {
       name:     authResponse.name,
       provider: authResponse.provider,
       role:     authResponse.role || "USER",
+      photoUrl: authResponse.photoUrl || null,
     })
   );
+}
+
+/** Update just the photo in localStorage (for local user uploads) */
+export function savePhoto(dataUrl) {
+  const user = getUser();
+  if (!user) return;
+  user.photoUrl = dataUrl;
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
+/**
+ * Save photo to backend DB — persists across logout/login
+ * Returns updated AuthResponse so we can refresh localStorage
+ */
+export async function savePhotoToServer(dataUrl) {
+  const res = await authFetch("http://localhost:8081/api/profile/photo", {
+    method: "PUT",
+    body: JSON.stringify({ photoUrl: dataUrl }),
+  });
+  if (!res.ok) throw new Error("Failed to save photo");
+  const updated = await res.json();
+  // Refresh localStorage with server response (keeps token, updates photoUrl)
+  saveAuth(updated);
+  return updated;
+}
+
+/**
+ * Load the latest profile from server (gets saved photo after re-login)
+ */
+export async function loadProfileFromServer() {
+  try {
+    const res = await authFetch("http://localhost:8081/api/profile/me");
+    if (!res.ok) return;
+    const profile = await res.json();
+    if (profile.photoUrl) {
+      savePhoto(profile.photoUrl);
+    }
+  } catch {
+    // silently fail — offline or token expired
+  }
 }
 
 export function getToken()   { return localStorage.getItem("token"); }
