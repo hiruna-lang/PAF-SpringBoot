@@ -1,8 +1,23 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
+<<<<<<< Updated upstream
+=======
+import { getUser, isLoggedIn, isAdmin } from '../M4/authService';
+import './Home.css';
+>>>>>>> Stashed changes
 
 function Home() {
+<<<<<<< Updated upstream
     const navigate = useNavigate();
+=======
+  const navigate = useNavigate();
+  useReveal();
+
+  // Check if already logged in — used to personalize navbar
+  const loggedIn = isLoggedIn();
+  const user     = loggedIn ? getUser() : null;
+
+>>>>>>> Stashed changes
   return (
     <div>
       <h1>Welcome to the Home Page</h1>
