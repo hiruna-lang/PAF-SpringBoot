@@ -1,7 +1,7 @@
 package backend.Module_2.repository;
 
+import backend.Module_1.model.Resource;
 import backend.Module_2.entity.Booking;
-import backend.Module_2.entity.Resource;
 import backend.Module_2.enums.BookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
