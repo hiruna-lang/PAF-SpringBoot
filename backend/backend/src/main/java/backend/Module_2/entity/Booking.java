@@ -21,12 +21,8 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "resource_id", nullable = false)
-    private Resource resource;
-
     @Column(nullable = false)
-    private String userId;
+    private Long resourceId;
 
     @Column(nullable = false)
     private String userEmail;
