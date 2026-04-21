@@ -44,16 +44,16 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // ── Public ──────────────────────────────────────────────
-                .requestMatchers(
-                    "/api/auth/register",
-                    "/api/auth/login",
-                    "/oauth2/**",
-                    "/login/oauth2/**"
-                ).permitAll()
+                    .requestMatchers(
+                            "/api/auth/**",
+                            "/oauth2/**",
+                            "/login/oauth2/**",
+                            "/api/module3/**",    // Module 3 ට පාර ඇරියා ✅
+                            "/api/resources/**",  // Module 1 ට පාර ඇරියා ✅
+                            "/api/notifications/**" // Module 4 ට පාර ඇරියා ✅
+                    ).permitAll()             // මේ පාරවල් වලට ඕන කෙනෙක්ට එන්න දෙන්න
 
-                // ── Admin only ───────────────────────────────────────────
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 // ── Admin + Manager + Technician ────────────────────────
                 .requestMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER", "TECHNICIAN")
 
@@ -71,7 +71,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3005"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
