@@ -16,6 +16,10 @@ public class BookingRequestDto {
     @NotNull(message = "Resource ID is required")
     private Long resourceId;
 
+    @NotBlank(message = "User email is required")
+    @Email(message = "Enter a valid email")
+    private String userEmail;
+
     @NotNull(message = "Booking date is required")
     private LocalDate bookingDate;
 
