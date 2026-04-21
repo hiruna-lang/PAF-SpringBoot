@@ -12,6 +12,7 @@ function OAuthCallback() {
     const token  = params.get("token");
     const role   = params.get("role") || "USER";
     const name   = params.get("name") || "";
+    const photo  = params.get("photo") || "";
 
     if (!token) {
       setError("Google login failed — no token received.");
@@ -26,6 +27,7 @@ function OAuthCallback() {
         name:     decodeURIComponent(name) || payload.sub,
         provider: "GOOGLE",
         role,
+        photoUrl: decodeURIComponent(photo) || null,
       });
       // Redirect based on role
       navigate(role === "ADMIN" ? "/m4/admin" : "/m4/dashboard", { replace: true });
