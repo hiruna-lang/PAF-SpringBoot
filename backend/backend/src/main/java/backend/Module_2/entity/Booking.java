@@ -1,5 +1,6 @@
 package backend.Module_2.entity;
 
+import backend.Module_1.model.Resource;
 import backend.Module_2.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
