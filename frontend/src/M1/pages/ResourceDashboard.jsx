@@ -31,99 +31,68 @@ function ResourceDashboard({ setCurrentPage }) {
 
   const totals = useMemo(() => {
     const total = resources.length;
-    const active = resources.filter((item) => item.status === "ACTIVE").length;
-    const outOfService = resources.filter(
-      (item) => item.status === "OUT_OF_SERVICE"
-    ).length;
-
+    const active = resources.filter((r) => r.status === "ACTIVE").length;
+    const outOfService = resources.filter((r) => r.status === "OUT_OF_SERVICE").length;
     const byType = typeOptions.map((type) => ({
       type,
-      count: resources.filter((item) => item.type === type).length,
+      count: resources.filter((r) => r.type === type).length,
     }));
-
     return { total, active, outOfService, byType };
   }, [resources]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="m1-page">
+      <div className="m1-page-header">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-900">Dashboard</h2>
-          <p className="text-sm text-slate-500">
-            Snapshot of campus resources and availability.
-          </p>
+          <h2 className="m1-page-title">Dashboard</h2>
+          <p className="m1-page-sub">Snapshot of campus resources and availability.</p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={() => setCurrentPage("create")}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-          >
+        <div className="m1-btn-group">
+          <button className="m1-btn-primary" onClick={() => setCurrentPage("create")}>
             Create Resource
           </button>
-          <button
-            onClick={() => setCurrentPage("view")}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
+          <button className="m1-btn-secondary" onClick={() => setCurrentPage("view")}>
             View Resources
           </button>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+      <div className="m1-meta">
         <span>
           Auto-refresh every 30 seconds
           {lastUpdated && (
-            <span className="ml-2 text-slate-400">
+            <span className="m1-meta-muted">
               Updated {lastUpdated.toLocaleTimeString()}
             </span>
           )}
         </span>
-        {loading && <span className="text-slate-400">Refreshing...</span>}
+        {loading && <span className="m1-meta-muted">Refreshing...</span>}
       </div>
 
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      {error && <div className="m1-alert error">{error}</div>}
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase text-slate-400">Total</p>
-          <p className="mt-2 text-3xl font-semibold text-slate-900">
-            {loading ? "..." : totals.total}
-          </p>
+      <div className="m1-stats-grid">
+        <div className="m1-card">
+          <p className="m1-stat-label">Total</p>
+          <p className="m1-stat-value">{loading ? "..." : totals.total}</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase text-slate-400">Active</p>
-          <p className="mt-2 text-3xl font-semibold text-emerald-600">
-            {loading ? "..." : totals.active}
-          </p>
+        <div className="m1-card">
+          <p className="m1-stat-label">Active</p>
+          <p className="m1-stat-value emerald">{loading ? "..." : totals.active}</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase text-slate-400">
-            Out of Service
-          </p>
-          <p className="mt-2 text-3xl font-semibold text-amber-600">
-            {loading ? "..." : totals.outOfService}
-          </p>
+        <div className="m1-card">
+          <p className="m1-stat-label">Out of Service</p>
+          <p className="m1-stat-value amber">{loading ? "..." : totals.outOfService}</p>
         </div>
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-slate-900">By Type</h3>
-        <div className="mt-3 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <h3 className="m1-section-title">By Type</h3>
+        <div className="m1-type-grid">
           {totals.byType.map((item) => (
-            <div
-              key={item.type}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <p className="text-xs font-semibold uppercase text-slate-400">
-                {item.type}
-              </p>
-              <p className="mt-2 text-2xl font-semibold text-slate-900">
-                {loading ? "..." : item.count}
-              </p>
+            <div key={item.type} className="m1-card">
+              <p className="m1-stat-label">{item.type}</p>
+              <p className="m1-type-value">{loading ? "..." : item.count}</p>
             </div>
           ))}
         </div>
