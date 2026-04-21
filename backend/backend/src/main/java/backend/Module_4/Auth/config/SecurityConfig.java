@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/auth/register",
                     "/api/auth/login",
+                    "/api/module3/**",
                     "/api/resources/**",
                     "/oauth2/**",
                     "/login/oauth2/**"
