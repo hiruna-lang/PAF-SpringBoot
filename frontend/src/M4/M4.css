@@ -20,7 +20,7 @@
   font-family: 'Inter', 'Segoe UI', sans-serif;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #e0e7ff 0%, #f0e6ff 50%, #fce7f3 100%);
+  background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 50%, #d1fae5 100%);
 }
 
 /* Soft blurred color blobs behind the card */
@@ -30,7 +30,7 @@
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(139,92,246,0.35), rgba(99,102,241,0.2) 60%, transparent 80%);
+  background: radial-gradient(circle, rgba(22,163,74,0.25), rgba(16,185,129,0.12) 60%, transparent 80%);
   top: -160px;
   left: -160px;
   filter: blur(60px);
@@ -44,7 +44,7 @@
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(236,72,153,0.3), rgba(251,113,133,0.15) 60%, transparent 80%);
+  background: radial-gradient(circle, rgba(34,197,94,0.2), rgba(16,185,129,0.1) 60%, transparent 80%);
   bottom: -120px;
   right: -120px;
   filter: blur(60px);
@@ -62,18 +62,18 @@
 .auth-card {
   position: relative;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 24px;
   padding: 44px 40px;
   width: 100%;
   max-width: 460px;
   box-shadow:
-    0 8px 32px rgba(99, 102, 241, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 8px 32px rgba(22, 163, 74, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
   animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -94,18 +94,18 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #16a34a, #22c55e);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
 }
 
 .auth-brand-name {
   font-size: 1rem;
   font-weight: 700;
-  color: #4338ca;
+  color: #15803d;
   letter-spacing: 0.3px;
 }
 
@@ -113,7 +113,7 @@
 .auth-card h2 {
   font-size: 1.85rem;
   font-weight: 800;
-  color: #1e1b4b;
+  color: #0f172a;
   margin-bottom: 6px;
   letter-spacing: -0.5px;
 }
@@ -173,9 +173,9 @@
 }
 
 .form-group input:focus {
-  border-color: #6366f1;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  border-color: #16a34a;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
 }
 
 .form-group input.input-error {
@@ -231,7 +231,7 @@
 .btn-primary {
   width: 100%;
   padding: 13px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -243,7 +243,7 @@
   position: relative;
   overflow: hidden;
   transition: transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 18px rgba(22, 163, 74, 0.35);
   letter-spacing: 0.2px;
 }
 
@@ -260,7 +260,7 @@
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.45);
 }
 
 .btn-primary:hover:not(:disabled)::after {
@@ -300,9 +300,9 @@
 .btn-google {
   width: 100%;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.8);
   color: #374151;
-  border: 1.5px solid rgba(99, 102, 241, 0.15);
+  border: 1.5px solid rgba(22, 163, 74, 0.2);
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
@@ -318,10 +318,10 @@
 }
 
 .btn-google:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(22, 163, 74, 0.4);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.1);
 }
 
 .btn-google:active {
@@ -337,14 +337,14 @@
 }
 
 .auth-footer span.link {
-  color: #6366f1;
+  color: #16a34a;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .auth-footer span.link:hover {
-  color: #4f46e5;
+  color: #15803d;
   text-decoration: underline;
 }
 
@@ -382,7 +382,7 @@
 
 .dashboard-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #e0e7ff 0%, #f0e6ff 50%, #fce7f3 100%);
+  background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 50%, #d1fae5 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -399,7 +399,7 @@
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(139,92,246,0.25), transparent 70%);
+  background: radial-gradient(circle, rgba(22,163,74,0.15), transparent 70%);
   top: -200px;
   right: -200px;
   filter: blur(60px);
@@ -551,8 +551,8 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  background: linear-gradient(135deg, #e0e7ff 0%, #f0e6ff 50%, #fce7f3 100%);
-  color: #4338ca;
+  background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 50%, #d1fae5 100%);
+  color: #15803d;
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-weight: 500;
@@ -561,9 +561,9 @@
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(99, 102, 241, 0.15);
-  border-top-color: #6366f1;
-  border-right-color: #8b5cf6;
+  border: 4px solid rgba(22, 163, 74, 0.15);
+  border-top-color: #16a34a;
+  border-right-color: #22c55e;
   border-radius: 50%;
   animation: spin 0.85s linear infinite;
 }
@@ -773,10 +773,17 @@
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
+.badge-technician {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
 /* role-badge variants in table */
-.role-badge-admin   { background: rgba(239,68,68,0.1);   color: #dc2626; border: 1px solid rgba(239,68,68,0.2);   border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
-.role-badge-manager { background: rgba(16,185,129,0.1);  color: #059669; border: 1px solid rgba(16,185,129,0.2);  border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
-.role-badge-user    { background: rgba(99,102,241,0.08); color: #4f46e5; border: 1px solid rgba(99,102,241,0.15); border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
+.role-badge-admin       { background: rgba(239,68,68,0.1);   color: #dc2626; border: 1px solid rgba(239,68,68,0.2);   border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
+.role-badge-manager     { background: rgba(16,185,129,0.1);  color: #059669; border: 1px solid rgba(16,185,129,0.2);  border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
+.role-badge-technician  { background: rgba(245,158,11,0.1);  color: #d97706; border: 1px solid rgba(245,158,11,0.2);  border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
+.role-badge-user        { background: rgba(99,102,241,0.08); color: #4f46e5; border: 1px solid rgba(99,102,241,0.15); border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
 
 /* Bottom nav row */
 .admin-nav-row {
@@ -807,4 +814,51 @@
   .admin-header { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
   .admin-main   { padding: 20px 16px; }
   .admin-stats  { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Admin toast notification ─────────────────────────────── */
+.admin-toast {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 9999;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  animation: toastIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
+  max-width: 360px;
+}
+
+.admin-toast-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.admin-toast-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* ── Admin loading spinner ────────────────────────────────── */
+.admin-spinner {
+  width: 18px; height: 18px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #16a34a;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
