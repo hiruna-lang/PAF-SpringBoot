@@ -14,7 +14,6 @@ function UpdateResource({ selectedResource, setCurrentPage }) {
       setError("Please select a resource to update from View Resources.");
       return;
     }
-
     setLoading(true);
     setMessage({ type: "", text: "" });
     try {
@@ -28,61 +27,42 @@ function UpdateResource({ selectedResource, setCurrentPage }) {
   };
 
   useEffect(() => {
-    if (message.type !== "success") {
-      return undefined;
-    }
-    const timeoutId = setTimeout(() => {
-      setMessage({ type: "", text: "" });
-    }, 3000);
-    return () => clearTimeout(timeoutId);
+    if (message.type !== "success") return undefined;
+    const id = setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+    return () => clearTimeout(id);
   }, [message.type]);
-
-  const messageStyles =
-    message.type === "success"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-      : "border-red-200 bg-red-50 text-red-700";
 
   if (!selectedResource) {
     return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-slate-900">Update Resource</h2>
-        <p className="text-sm text-slate-600">
-          Please select a resource to update from View Resources.
-        </p>
-        <button
-          onClick={() => setCurrentPage("view")}
-          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
-          Go to View Resources
-        </button>
+      <div className="m1-page">
+        <h2 className="m1-page-title">Update Resource</h2>
+        <p className="m1-page-sub">Please select a resource to update from View Resources.</p>
+        <div>
+          <button className="m1-btn-secondary" onClick={() => setCurrentPage("view")}>
+            Go to View Resources
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="m1-page">
+      <div className="m1-page-header">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-900">Update Resource</h2>
-          <p className="text-sm text-slate-500">
-            Editing resource ID {selectedResource.id}.
-          </p>
+          <h2 className="m1-page-title">Update Resource</h2>
+          <p className="m1-page-sub">Editing resource ID {selectedResource.id}.</p>
         </div>
-        <button
-          onClick={() => setCurrentPage("view")}
-          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
+        <button className="m1-btn-secondary" onClick={() => setCurrentPage("view")}>
           Back to View
         </button>
       </div>
 
       {message.text && (
-        <div className={`rounded-xl border px-4 py-2 text-sm ${messageStyles}`}>
-          {message.text}
-        </div>
+        <div className={`m1-alert ${message.type}`}>{message.text}</div>
       )}
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="m1-card-lg">
         <ResourceForm
           initialData={selectedResource}
           onSubmit={handleSubmit}
