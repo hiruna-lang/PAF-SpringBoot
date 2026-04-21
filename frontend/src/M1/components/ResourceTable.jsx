@@ -2,58 +2,39 @@ import React from "react";
 
 function ResourceTable({ resources, onEdit, onDelete, loading }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+    <div className="m1-table-wrap">
+      <div className="m1-table-scroll">
+        <table className="m1-table">
+          <thead>
             <tr>
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Capacity</th>
-              <th className="px-4 py-3">Location</th>
-              <th className="px-4 py-3">Availability Window</th>
-              <th className="px-4 py-3">Type</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Actions</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Capacity</th>
+              <th>Location</th>
+              <th>Availability Window</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody>
             {resources.map((resource) => (
-              <tr
-                key={resource.id}
-                className="text-slate-700 transition hover:bg-slate-50"
-              >
-                <td className="px-4 py-3 font-medium text-slate-900">{resource.id}</td>
-                <td className="px-4 py-3">{resource.name}</td>
-                <td className="px-4 py-3">{resource.capacity}</td>
-                <td className="px-4 py-3">{resource.location}</td>
-                <td className="px-4 py-3">{resource.availabilityWindow}</td>
-                <td className="px-4 py-3">{resource.type}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      resource.status === "ACTIVE"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-amber-100 text-amber-700"
-                    }`}
-                  >
+              <tr key={resource.id}>
+                <td className="m1-td-id">{resource.id}</td>
+                <td>{resource.name}</td>
+                <td>{resource.capacity}</td>
+                <td>{resource.location}</td>
+                <td>{resource.availabilityWindow}</td>
+                <td>{resource.type}</td>
+                <td>
+                  <span className={`m1-badge ${resource.status === "ACTIVE" ? "active" : "inactive"}`}>
                     {resource.status}
                   </span>
                 </td>
-                <td className="px-4 py-3">
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => onEdit(resource)}
-                      className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-semibold text-white hover:bg-slate-800"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => onDelete(resource.id)}
-                      className="rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
-                    >
-                      Delete
-                    </button>
+                <td>
+                  <div className="m1-table-actions">
+                    <button className="m1-btn-dark" onClick={() => onEdit(resource)}>Edit</button>
+                    <button className="m1-btn-danger" onClick={() => onDelete(resource.id)}>Delete</button>
                   </div>
                 </td>
               </tr>
@@ -62,14 +43,10 @@ function ResourceTable({ resources, onEdit, onDelete, loading }) {
         </table>
       </div>
       {!loading && resources.length === 0 && (
-        <div className="px-4 py-6 text-center text-sm text-slate-500">
-          No resources found.
-        </div>
+        <div className="m1-table-empty">No resources found.</div>
       )}
       {loading && (
-        <div className="px-4 py-6 text-center text-sm text-slate-500">
-          Loading resources...
-        </div>
+        <div className="m1-table-empty">Loading resources...</div>
       )}
     </div>
   );
