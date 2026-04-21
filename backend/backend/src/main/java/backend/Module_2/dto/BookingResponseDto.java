@@ -18,9 +18,10 @@ public class BookingResponseDto {
 
     private Long resourceId;
     private String resourceName;
-    private String resourceType;
     private Integer resourceCapacity;
     private String resourceLocation;
+    private String resourceAvailabilityWindow;
+    private String resourceType;
     private String resourceStatus;
 
     private String userId;
