@@ -38,6 +38,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String email    = oAuth2User.getAttribute("email");
         String name     = oAuth2User.getAttribute("name");
         String googleId = oAuth2User.getAttribute("sub");
+        String picture  = oAuth2User.getAttribute("picture"); // Google profile photo URL
 
         Optional<User> existingUser = userRepository.findByEmail(email);
 
@@ -47,15 +48,17 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             if (user.getGoogleId() == null) {
                 user.setGoogleId(googleId);
                 user.setProvider("GOOGLE");
-                userRepository.save(user);
             }
+            // Always update photo from Google (it may change)
+            if (picture != null) user.setPhotoUrl(picture);
+            userRepository.save(user);
         } else {
             user = new User();
             user.setEmail(email);
             user.setName(name);
             user.setGoogleId(googleId);
             user.setProvider("GOOGLE");
-            // First user gets ADMIN, rest get USER
+            user.setPhotoUrl(picture);
             long count = userRepository.count();
             user.setRole(count == 0 ? Role.ADMIN : Role.USER);
             userRepository.save(user);
@@ -68,7 +71,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String redirectUrl = redirectUri
                 + "?token=" + token
                 + "&role=" + user.getRole().name()
-                + "&name=" + java.net.URLEncoder.encode(user.getName() != null ? user.getName() : "", "UTF-8");
+                + "&name=" + java.net.URLEncoder.encode(user.getName() != null ? user.getName() : "", "UTF-8")
+                + "&photo=" + java.net.URLEncoder.encode(user.getPhotoUrl() != null ? user.getPhotoUrl() : "", "UTF-8");
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
