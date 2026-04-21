@@ -18,6 +18,7 @@ export default function AdminDashboard() {
   const currentUser = getUser();
 
   const [users,   setUsers]   = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [stats,   setStats]   = useState(null);
   const [loading, setLoading] = useState(true);
   const [pageErr, setPageErr] = useState("");
