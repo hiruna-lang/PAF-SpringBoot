@@ -1,17 +1,17 @@
 package backend.Module_2.service.impl;
 
+import backend.Module_1.enums.ResourceStatus;
+import backend.Module_1.model.Resource;
+import backend.Module_1.repository.ResourceRepository;
 import backend.Module_2.dto.BookingRequestDto;
 import backend.Module_2.dto.BookingResponseDto;
 import backend.Module_2.dto.BookingStatusUpdateDto;
 import backend.Module_2.entity.Booking;
-import backend.Module_2.entity.Resource;
 import backend.Module_2.enums.BookingStatus;
-import backend.Module_2.enums.ResourceStatus;
 import backend.Module_2.exception.BadRequestException;
 import backend.Module_2.exception.ConflictException;
 import backend.Module_2.exception.ResourceNotFoundException;
 import backend.Module_2.repository.BookingRepository;
-import backend.Module_2.repository.ResourceRepository;
 import backend.Module_2.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -59,7 +59,8 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = Booking.builder()
                 .resource(resource)
-                .userEmail(dto.getUserEmail())
+                .userId("TEMP_USER_ID")
+                .userEmail("tempuser@gmail.com")
                 .bookingDate(dto.getBookingDate())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
@@ -184,6 +185,12 @@ public class BookingServiceImpl implements BookingService {
                 .id(booking.getId())
                 .resourceId(booking.getResource().getId())
                 .resourceName(booking.getResource().getName())
+                .resourceCapacity(booking.getResource().getCapacity())
+                .resourceLocation(booking.getResource().getLocation())
+                .resourceAvailabilityWindow(booking.getResource().getAvailabilityWindow())
+                .resourceType(String.valueOf(booking.getResource().getType()))
+                .resourceStatus(String.valueOf(booking.getResource().getStatus()))
+                .userId(booking.getUserId())
                 .userEmail(booking.getUserEmail())
                 .bookingDate(booking.getBookingDate())
                 .startTime(booking.getStartTime())
