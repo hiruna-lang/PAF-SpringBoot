@@ -30,6 +30,9 @@ export default function AdminPortal() {
 
   return (
     <div className="admin-portal">
+      <div className="admin-portal__glow admin-portal__glow--one" />
+      <div className="admin-portal__glow admin-portal__glow--two" />
+      <div className="admin-portal__gridline" />
       <header className="admin-portal__header">
         <div>
           <p className="admin-portal__eyebrow">Admin Portal</p>
