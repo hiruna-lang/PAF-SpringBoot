@@ -1,6 +1,5 @@
 package backend.Module_2.entity;
 
-import backend.Module_2.enums.ResourceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
