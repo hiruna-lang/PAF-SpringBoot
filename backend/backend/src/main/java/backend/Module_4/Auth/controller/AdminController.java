@@ -36,12 +36,14 @@ public class AdminController {
      */
     @PutMapping("/users/{id}/role")
     @PreAuthorize("hasRole('ADMIN')")
-        public ResponseEntity<User> updateRole(
+    public ResponseEntity<User> updateRole(
             @PathVariable String id,
-            @RequestBody Map<String, String> body) {
+            @RequestBody Map<String, String> body,
+            org.springframework.security.core.Authentication auth) {
 
         Role newRole = Role.valueOf(body.get("role").toUpperCase());
-        return ResponseEntity.ok(userService.updateRole(id, newRole));
+        String adminEmail = auth != null ? auth.getName() : "an administrator";
+        return ResponseEntity.ok(userService.updateRole(id, newRole, adminEmail));
     }
 
     /**

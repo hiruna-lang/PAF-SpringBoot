@@ -37,6 +37,7 @@ import backend.Module_3.service.NotificationService;
 import backend.Module_3.service.TechnicianService;
 import backend.Module_3.service.TicketService;
 import backend.Module_3.support.ActorContext;
+import backend.Module_4.Notification.service.M4NotificationService;
 
 @Service
 @Transactional
@@ -46,16 +47,19 @@ public class TicketServiceImpl implements TicketService {
     private final TechnicianService technicianService;
     private final NotificationService notificationService;
     private final FileStorageService fileStorageService;
+    private final M4NotificationService m4NotificationService;
 
     public TicketServiceImpl(
             TicketRepository ticketRepository,
             TechnicianService technicianService,
             NotificationService notificationService,
-            FileStorageService fileStorageService) {
+            FileStorageService fileStorageService,
+            M4NotificationService m4NotificationService) {
         this.ticketRepository = ticketRepository;
         this.technicianService = technicianService;
         this.notificationService = notificationService;
         this.fileStorageService = fileStorageService;
+        this.m4NotificationService = m4NotificationService;
     }
 
     @Override
@@ -101,6 +105,7 @@ public class TicketServiceImpl implements TicketService {
         ticket.setDatabaseId(UUID.randomUUID().toString());
         ticket.setTicketCode(generateTicketCode());
         ticket.setRequesterId(actor.userId());
+        ticket.setRequesterEmail(actor.userEmail());
         ticket.setRequesterName(actor.userName());
         ticket.setRequesterRole(actor.role());
         ticket.setResourceLocation(normalize(request.getResource()));
@@ -119,6 +124,13 @@ public class TicketServiceImpl implements TicketService {
         notificationService.createNotification(
                 "New ticket created",
                 saved.getTicketCode() + " was submitted for " + saved.getResourceLocation() + ".");
+
+        // M4 cross-module: notify requester + all admins
+        m4NotificationService.notifyTicketCreated(
+                saved.getRequesterEmail(),
+                saved.getTicketCode(),
+                saved.getResourceLocation());
+
         return toResponse(saved);
     }
 
@@ -147,6 +159,14 @@ public class TicketServiceImpl implements TicketService {
         notificationService.createNotification(
                 "Technician assignment updated",
                 saved.getTicketCode() + " assigned to " + technician.getName() + ".");
+
+        // M4 cross-module: notify technician + requester
+        m4NotificationService.notifyTicketAssigned(
+                technician.getEmail() != null ? technician.getEmail() : null,
+                saved.getTicketCode(),
+                technician.getName(),
+                saved.getRequesterEmail());
+
         return toResponse(saved);
     }
 
@@ -174,6 +194,13 @@ public class TicketServiceImpl implements TicketService {
         notificationService.createNotification(
                 "Ticket status updated",
                 saved.getTicketCode() + " moved to " + saved.getStatus() + ".");
+
+        // M4 cross-module: notify requester + admins on significant transitions
+        m4NotificationService.notifyTicketStatusChanged(
+                saved.getRequesterEmail(),
+                saved.getTicketCode(),
+                saved.getStatus().name());
+
         return toResponse(saved);
     }
 
@@ -196,6 +223,13 @@ public class TicketServiceImpl implements TicketService {
         notificationService.createNotification(
                 "Ticket rejected",
                 saved.getTicketCode() + " was rejected. Reason: " + normalize(request.reason()));
+
+        // M4 cross-module: notify requester + admins
+        m4NotificationService.notifyTicketRejected(
+                saved.getRequesterEmail(),
+                saved.getTicketCode(),
+                normalize(request.reason()));
+
         return toResponse(saved);
     }
 

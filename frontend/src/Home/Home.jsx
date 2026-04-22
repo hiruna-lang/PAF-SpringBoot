@@ -1,9 +1,189 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNotifications } from "../M4/useNotifications";
+import { isLoggedIn, getUser } from "../M4/authService";
 import "./Home.css";
+
+// ── Type metadata for the dropdown ────────────────────────
+const TYPE_ICON = {
+  login: "🔑", register: "🎉", role_change: "👑",
+  security: "🛡️", system: "⚙️", booking: "📅",
+  resource: "🏛️", ticket: "🎫",
+};
+const SOURCE_COLOR = {
+  M4: "#6366f1", M2: "#8b5cf6", M1: "#10b981", M3: "#f59e0b",
+};
+const SOURCE_LABEL = {
+  M4: "Auth", M2: "Booking", M1: "Resources", M3: "Tickets",
+};
+
+function relativeTime(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const min = Math.floor(diff / 60_000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  return `${Math.floor(hr / 24)}d ago`;
+}
+
+function NavBell({ navigate }) {
+  const loggedIn = isLoggedIn();
+  const { notifications, unreadCount, loading, markRead, markAllRead } = useNotifications();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open]);
+
+  if (!loggedIn) {
+    return (
+      <button
+        className="nav-icon-btn"
+        type="button"
+        onClick={() => navigate("/m4/login")}
+        aria-label="Sign in to see notifications"
+        title="Sign in to see notifications"
+      >
+        <span className="nav-icon">🔔</span>
+      </button>
+    );
+  }
+
+  const preview = notifications.slice(0, 5);
+
+  return (
+    <div className="nav-bell-wrapper" ref={ref}>
+      <button
+        className="nav-icon-btn"
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+        aria-expanded={open}
+        title="Notifications"
+      >
+        <span className="nav-icon">🔔</span>
+        {unreadCount > 0 && (
+          <span className="nav-notification-dot" aria-hidden="true" />
+        )}
+      </button>
+
+      {open && (
+        <div className="nav-notif-panel" role="dialog" aria-label="Notifications">
+          {/* Header */}
+          <div className="nav-notif-header">
+            <div>
+              <span className="nav-notif-title">Notifications</span>
+              {unreadCount > 0 && (
+                <span className="nav-notif-count-badge">{unreadCount} unread</span>
+              )}
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  className="nav-notif-text-btn"
+                  onClick={markAllRead}
+                  disabled={loading}
+                >
+                  Mark all read
+                </button>
+              )}
+              <button
+                type="button"
+                className="nav-notif-close"
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          {/* List */}
+          <ul className="nav-notif-list" role="list">
+            {preview.length === 0 ? (
+              <li className="nav-notif-empty">No notifications yet</li>
+            ) : (
+              preview.map((n) => {
+                const icon = TYPE_ICON[n.type] || "🔔";
+                const srcColor = SOURCE_COLOR[n.source] || "#6b7280";
+                const srcLabel = SOURCE_LABEL[n.source] || n.source || "System";
+                return (
+                  <li
+                    key={n.id}
+                    className={`nav-notif-item${n.read ? "" : " nav-notif-item--unread"}`}
+                  >
+                    <span
+                      className="nav-notif-item-icon"
+                      style={{ background: `${srcColor}15`, color: srcColor }}
+                      aria-hidden="true"
+                    >
+                      {icon}
+                    </span>
+                    <div className="nav-notif-item-body">
+                      <div className="nav-notif-item-top">
+                        <strong>{n.title}</strong>
+                        <span
+                          className="nav-notif-src"
+                          style={{ background: `${srcColor}15`, color: srcColor }}
+                        >
+                          {srcLabel}
+                        </span>
+                      </div>
+                      <p>{n.message}</p>
+                      <span className="nav-notif-time">{relativeTime(n.createdAt)}</span>
+                    </div>
+                    {!n.read && (
+                      <button
+                        type="button"
+                        className="nav-notif-read-btn"
+                        onClick={() => markRead(n.id)}
+                        aria-label="Mark as read"
+                      >
+                        ✓
+                      </button>
+                    )}
+                  </li>
+                );
+              })
+            )}
+          </ul>
+
+          {/* Footer */}
+          <div className="nav-notif-footer">
+            <button
+              type="button"
+              className="nav-notif-text-btn"
+              onClick={() => { setOpen(false); navigate("/notifications"); }}
+            >
+              View all notifications →
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Home() {
   const navigate = useNavigate();
+  const user = getUser();
 
   useEffect(() => {
     const targets = document.querySelectorAll(".reveal");
@@ -61,25 +241,18 @@ function Home() {
         </div>
 
         <div className="nav-icons">
-          <button
-            className="nav-icon-btn"
-            type="button"
-            onClick={() => navigate("/notifications")}
-            aria-label="Notifications"
-            title="Notifications"
-          >
-            <span className="nav-icon">🔔</span>
-            <span className="nav-notification-dot"></span>
-          </button>
+          <NavBell navigate={navigate} />
 
           <button
             className="nav-icon-btn nav-profile-btn"
             type="button"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate(isLoggedIn() ? "/m4/dashboard" : "/m4/login")}
             aria-label="Profile"
-            title="Profile"
+            title={isLoggedIn() ? (user?.name || "Profile") : "Sign in"}
           >
-            <span className="nav-icon">👤</span>
+            {isLoggedIn() && user?.photoUrl
+              ? <img src={user.photoUrl} alt="avatar" className="nav-avatar-img" />
+              : <span className="nav-icon">👤</span>}
           </button>
         </div>
       </nav>

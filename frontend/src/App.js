@@ -2,12 +2,11 @@ import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
 import Home          from './Home/Home';
+import NotificationsPage from './Home/NotificationsPage';
 import AdminPortal from './Admin/AdminPortal';
 import M1 from './M1/m1';
-import ResourceListPage from './M1/ResourceList';
 import M2 from './M2/m2';
 import M3Module from './M3/m3';
-import StandaloneCreateTicketPage from './M3/pages/StandaloneCreateTicketPage';
 import M4, { OAuthCallback } from './M4/m4';
 
 function App() {
@@ -16,11 +15,8 @@ function App() {
       {/* Home */}
       <Route path="/" element={<Home />} />
 
-      {/* Campus Resources — accessible from Home navbar */}
-      <Route path="/resources" element={<ResourceListPage />} />
-
-      {/* Create Ticket — standalone page from Home navbar (no M3 sidebar) */}
-      <Route path="/create-ticket" element={<StandaloneCreateTicketPage />} />
+      {/* Unified notifications page */}
+      <Route path="/notifications" element={<NotificationsPage />} />
 
       {/* Admin portal */}
       <Route path="/admin" element={<AdminPortal />} />

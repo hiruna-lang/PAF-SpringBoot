@@ -7,6 +7,7 @@ import backend.Module_4.Auth.model.Role;
 import backend.Module_4.Auth.model.User;
 import backend.Module_4.Auth.repository.UserRepository;
 import backend.Module_4.Auth.util.JwtUtil;
+import backend.Module_4.Notification.service.M4NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class UserService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private M4NotificationService notificationService;
 
     /** Register a new local user — first user becomes ADMIN, rest are USER */
     public AuthResponse register(RegisterRequest request) {
@@ -44,6 +48,9 @@ public class UserService {
 
         userRepository.save(user);
 
+        // Notify the new user
+        notificationService.notifyRegister(user.getEmail(), user.getName());
+
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
         return new AuthResponse(token, user.getEmail(), user.getName(),
                 user.getProvider(), user.getRole().name(), user.getPhotoUrl());
@@ -62,6 +69,9 @@ public class UserService {
             throw new RuntimeException("Invalid password");
         }
 
+        // Notify the user of the sign-in
+        notificationService.notifyLogin(user.getEmail(), user.getName());
+
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
         return new AuthResponse(token, user.getEmail(), user.getName(),
                 user.getProvider(), user.getRole().name(), user.getPhotoUrl());
@@ -72,12 +82,22 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    /** Change a user's role — ADMIN only */
-    public User updateRole(String userId, Role newRole) {
+    /** Change a user's role — ADMIN only (also notifies the affected user) */
+    public User updateRole(String userId, Role newRole, String adminEmail) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(newRole);
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        // Notify the user whose role changed
+        notificationService.notifyRoleChange(user.getEmail(), newRole.name(), adminEmail);
+
+        return user;
+    }
+
+    /** Overload kept for backward compatibility (no admin email known) */
+    public User updateRole(String userId, Role newRole) {
+        return updateRole(userId, newRole, "an administrator");
     }
 
     /** Save profile photo (base64 data URL) for the authenticated user */
@@ -86,7 +106,10 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setPhotoUrl(photoUrl);
         userRepository.save(user);
-        // Return fresh AuthResponse so frontend can update stored user object
+
+        // Notify the user
+        notificationService.notifyPhotoUpdate(email);
+
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
         return new AuthResponse(token, user.getEmail(), user.getName(),
                 user.getProvider(), user.getRole().name(), user.getPhotoUrl());
