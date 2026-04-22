@@ -33,28 +33,53 @@ function Home() {
           <span className="nav-brand-icon">SC</span>
           <span className="nav-brand-name">SmartCampus</span>
         </a>
-        <ul className="nav-links">
-          <li>
-            <a href="#features">Features</a>
-          </li>
-          <li>
-            <a href="#modules">Modules</a>
-          </li>
-          <li>
-            <a href="#impact">Impact</a>
-          </li>
-          <li>
-            <a href="#cta">Get Started</a>
-          </li>
-        </ul>
-        <div className="nav-actions">
-          <button className="btn-ghost" type="button" onClick={() => navigate("/admin")}
+
+        <div className="nav-center">
+          <button
+            className="nav-menu-btn"
+            type="button"
+            onClick={() => navigate("/m1")}
           >
-            Admin
+            Resources
           </button>
-          <button className="btn-nav-cta" type="button" onClick={() => navigate("/m4")}
+
+          <button
+            className="nav-menu-btn"
+            type="button"
+            onClick={() => navigate("/bookings")}
           >
-            Sign In
+            My Booking
+          </button>
+
+          <button
+            className="nav-menu-btn nav-menu-highlight"
+            type="button"
+            onClick={() => navigate("/create-ticket")}
+          >
+            Create Ticket
+          </button>
+        </div>
+
+        <div className="nav-icons">
+          <button
+            className="nav-icon-btn"
+            type="button"
+            onClick={() => navigate("/notifications")}
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <span className="nav-icon">🔔</span>
+            <span className="nav-notification-dot"></span>
+          </button>
+
+          <button
+            className="nav-icon-btn nav-profile-btn"
+            type="button"
+            onClick={() => navigate("/profile")}
+            aria-label="Profile"
+            title="Profile"
+          >
+            <span className="nav-icon">👤</span>
           </button>
         </div>
       </nav>
