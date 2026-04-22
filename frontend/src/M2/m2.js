@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { isLoggedIn, getUser, isAdmin, logout } from "../M4/authService";
 import ResourceList from "./ResourceList";
 import BookingForm from "./BookingForm";
 import MyBookings from "./MyBookings";
+import AdminM2 from "./AdminM2";
 import Toast, { makeToast } from "./Toast";
 import "./M2.css";
 
@@ -12,34 +13,9 @@ const NAV_ITEMS = [
   { key: "my-bookings", label: "My Bookings", icon: "📅" },
 ];
 
-function M2() {
+function M2UserView() {
   const navigate = useNavigate();
   const loggedIn = isLoggedIn();
-  const user = getUser();
-  const admin = isAdmin();
-
-  const [tab, setTab] = useState("resources");
-  const [bookingResource, setBookingResource] = useState(null);
-  const [toasts, setToasts] = useState([]);
-
-  const addToast = useCallback((type, message) => {
-    setToasts(t => [...t, makeToast(type, message)]);
-  }, []);
-
-  const removeToast = useCallback((id) => {
-    setToasts(t => t.filter(x => x.id !== id));
-  }, []);
-
-  const handleBookSuccess = (booking) => {
-    setBookingResource(null);
-    addToast("success", `Booking for "${booking.resourceName}" submitted — awaiting admin approval.`);
-    setTab("my-bookings");
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
 
   if (!loggedIn) {
     return (
@@ -67,6 +43,36 @@ function M2() {
       </div>
     );
   }
+
+  return <M2LoggedInView navigate={navigate} />;
+}
+
+function M2LoggedInView({ navigate }) {
+  const user = getUser();
+  const admin = isAdmin();
+
+  const [tab, setTab] = useState("resources");
+  const [bookingResource, setBookingResource] = useState(null);
+  const [toasts, setToasts] = useState([]);
+
+  const addToast = useCallback((type, message) => {
+    setToasts(t => [...t, makeToast(type, message)]);
+  }, []);
+
+  const removeToast = useCallback((id) => {
+    setToasts(t => t.filter(x => x.id !== id));
+  }, []);
+
+  const handleBookSuccess = (booking) => {
+    setBookingResource(null);
+    addToast("success", `Booking for "${booking.resourceName}" submitted — awaiting admin approval.`);
+    setTab("my-bookings");
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   const navItems = [...NAV_ITEMS];
   const initials = (user?.name || user?.email || "U").charAt(0).toUpperCase();
@@ -153,6 +159,17 @@ function M2() {
       <Toast toasts={toasts} onRemove={removeToast} />
     </div>
   );
+}
+
+function M2() {
+  const location = useLocation();
+  const isAdminPanelRoute = location.pathname.startsWith("/m2/admin");
+
+  if (isAdminPanelRoute) {
+    return <AdminM2 />;
+  }
+
+  return <M2UserView />;
 }
 
 export default M2;

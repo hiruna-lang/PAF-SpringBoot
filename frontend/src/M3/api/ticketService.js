@@ -1,42 +1,79 @@
-import axios from "axios";
-
 const apiBaseUrl =
   process.env.REACT_APP_M3_API_BASE_URL ||
   "http://localhost:8081/api/module3";
 
-const apiClient = axios.create({
-  baseURL: apiBaseUrl,
-});
-
-apiClient.interceptors.request.use((config) => {
+function getAuthHeaders() {
   const auth = JSON.parse(localStorage.getItem("smart-campus-m3-auth") || "null");
+  const headers = {};
 
   if (auth?.token) {
-    config.headers.Authorization = `Bearer ${auth.token}`;
+    headers.Authorization = `Bearer ${auth.token}`;
   }
   if (auth?.user?.id) {
-    config.headers["X-User-Id"] = auth.user.id;
+    headers["X-User-Id"] = auth.user.id;
   }
   if (auth?.user?.name) {
-    config.headers["X-User-Name"] = auth.user.name;
+    headers["X-User-Name"] = auth.user.name;
   }
   if (auth?.role) {
-    config.headers["X-User-Role"] = auth.role;
+    headers["X-User-Role"] = auth.role;
   }
 
-  return config;
-});
+  return headers;
+}
 
-function toApiError(error) {
-  const message =
-    error?.response?.data?.message ||
-    error?.response?.data?.error ||
-    error?.message ||
-    "Unable to complete the request.";
-  const apiError = new Error(message);
-  apiError.status = error?.response?.status;
-  apiError.fieldErrors = error?.response?.data?.fieldErrors || {};
-  return apiError;
+async function request(path, { method = "GET", params, body, isFormData } = {}) {
+  const baseUrl = apiBaseUrl.endsWith("/") ? apiBaseUrl : `${apiBaseUrl}/`;
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  const url = new URL(normalizedPath, baseUrl);
+
+  if (params && typeof params === "object") {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        url.searchParams.append(key, value);
+      }
+    });
+  }
+
+  const headers = {
+    ...getAuthHeaders(),
+  };
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  const response = await fetch(url.toString(), {
+    method,
+    headers,
+    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
+  });
+
+  if (!response.ok) {
+    let errorData = null;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = null;
+    }
+
+    const message =
+      errorData?.message ||
+      errorData?.error ||
+      response.statusText ||
+      "Unable to complete the request.";
+
+    const error = new Error(message);
+    error.status = response.status;
+    error.fieldErrors = errorData?.fieldErrors || {};
+    throw error;
+  }
+
+  if (response.status === 204) {
+    return null;
+  }
+
+  return response.json();
 }
 
 function resolveAssetUrl(value) {
@@ -62,99 +99,76 @@ function normalizeTicket(ticket) {
 }
 
 export async function getTickets(filters) {
-  try {
-    const response = await apiClient.get("/tickets", { params: filters });
-    return response.data.map(normalizeTicket);
-  } catch (error) {
-    throw toApiError(error);
-  }
+  const data = await request("/tickets", { params: filters });
+  return data.map(normalizeTicket);
 }
 
 export async function getTechnicians() {
-  try {
-    const response = await apiClient.get("/technicians");
-    return response.data;
-  } catch (error) {
-    throw toApiError(error);
-  }
+  return request("/technicians");
 }
 
 export async function createTechnician(payload) {
-  try {
-    const response = await apiClient.post("/technicians", payload);
-    return response.data;
-  } catch (error) {
-    throw toApiError(error);
-  }
+  return request("/technicians", { method: "POST", body: payload });
 }
 
 export async function createTicket(payload) {
-  try {
-    const formData = new FormData();
-    Object.entries(payload).forEach(([key, value]) => {
-      if (key === "attachments") {
-        value.forEach((file) => formData.append("attachments", file.file));
-      } else {
-        formData.append(key, value);
-      }
-    });
-    const response = await apiClient.post("/tickets", formData);
-    return normalizeTicket(response.data);
-  } catch (error) {
-    throw toApiError(error);
-  }
+  const formData = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (key === "attachments") {
+      value.forEach((file) => formData.append("attachments", file.file));
+    } else {
+      formData.append(key, value);
+    }
+  });
+
+  const data = await request("/tickets", {
+    method: "POST",
+    body: formData,
+    isFormData: true,
+  });
+  return normalizeTicket(data);
 }
 
 export async function assignTechnician(ticketId, technicianId) {
-  try {
-    const response = await apiClient.patch(`/tickets/${ticketId}/assign`, { technicianId });
-    return normalizeTicket(response.data);
-  } catch (error) {
-    throw toApiError(error);
-  }
+  const data = await request(`/tickets/${ticketId}/assign`, {
+    method: "PATCH",
+    body: { technicianId },
+  });
+  return normalizeTicket(data);
 }
 
 export async function updateTicketStatus(ticketId, nextStatus, options = {}) {
-  try {
-    const response = await apiClient.patch(`/tickets/${ticketId}/status`, { status: nextStatus, ...options });
-    return normalizeTicket(response.data);
-  } catch (error) {
-    throw toApiError(error);
-  }
+  const data = await request(`/tickets/${ticketId}/status`, {
+    method: "PATCH",
+    body: { status: nextStatus, ...options },
+  });
+  return normalizeTicket(data);
 }
 
 export async function rejectTicket(ticketId, reason) {
-  try {
-    const response = await apiClient.patch(`/tickets/${ticketId}/reject`, { reason });
-    return normalizeTicket(response.data);
-  } catch (error) {
-    throw toApiError(error);
-  }
+  const data = await request(`/tickets/${ticketId}/reject`, {
+    method: "PATCH",
+    body: { reason },
+  });
+  return normalizeTicket(data);
 }
 
 export async function addComment(ticketId, message) {
-  try {
-    const response = await apiClient.post(`/tickets/${ticketId}/comments`, { message });
-    return normalizeTicket(response.data);
-  } catch (error) {
-    throw toApiError(error);
-  }
+  const data = await request(`/tickets/${ticketId}/comments`, {
+    method: "POST",
+    body: { message },
+  });
+  return normalizeTicket(data);
 }
 
 export async function updateComment(ticketId, commentId, message) {
-  try {
-    const response = await apiClient.patch(`/tickets/${ticketId}/comments/${commentId}`, { message });
-    return normalizeTicket(response.data);
-  } catch (error) {
-    throw toApiError(error);
-  }
+  const data = await request(`/tickets/${ticketId}/comments/${commentId}`, {
+    method: "PATCH",
+    body: { message },
+  });
+  return normalizeTicket(data);
 }
 
 export async function deleteComment(ticketId, commentId) {
-  try {
-    await apiClient.delete(`/tickets/${ticketId}/comments/${commentId}`);
-    return;
-  } catch (error) {
-    throw toApiError(error);
-  }
+  await request(`/tickets/${ticketId}/comments/${commentId}`, { method: "DELETE" });
 }

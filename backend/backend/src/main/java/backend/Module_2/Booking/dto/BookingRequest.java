@@ -9,8 +9,8 @@ import java.time.LocalTime;
 
 public class BookingRequest {
 
-    @NotNull(message = "Resource ID is required")
-    private Long resourceId;
+    @NotBlank(message = "Resource ID is required")
+    private String resourceId;
 
     @NotNull(message = "Booking date is required")
     private LocalDate bookingDate;
@@ -27,8 +27,8 @@ public class BookingRequest {
     @Min(value = 1, message = "Expected attendees must be at least 1")
     private Integer expectedAttendees;
 
-    public Long getResourceId() { return resourceId; }
-    public void setResourceId(Long resourceId) { this.resourceId = resourceId; }
+    public String getResourceId() { return resourceId; }
+    public void setResourceId(String resourceId) { this.resourceId = resourceId; }
 
     public LocalDate getBookingDate() { return bookingDate; }
     public void setBookingDate(LocalDate bookingDate) { this.bookingDate = bookingDate; }

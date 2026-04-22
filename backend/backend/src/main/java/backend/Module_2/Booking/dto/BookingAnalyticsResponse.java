@@ -12,17 +12,17 @@ public class BookingAnalyticsResponse {
     private List<TopResource> topResources;
 
     public static class TopResource {
-        private Long resourceId;
+        private String resourceId;
         private String resourceName;
         private long bookingCount;
 
-        public TopResource(Long resourceId, String resourceName, long bookingCount) {
+        public TopResource(String resourceId, String resourceName, long bookingCount) {
             this.resourceId = resourceId;
             this.resourceName = resourceName;
             this.bookingCount = bookingCount;
         }
 
-        public Long getResourceId() { return resourceId; }
+        public String getResourceId() { return resourceId; }
         public String getResourceName() { return resourceName; }
         public long getBookingCount() { return bookingCount; }
     }

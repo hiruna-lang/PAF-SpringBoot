@@ -1,23 +1,26 @@
 package backend.Module_2.Booking.service;
 
+import backend.Module_1.enums.ResourceStatus;
+import backend.Module_1.model.Resource;
+import backend.Module_1.repository.ResourceRepository;
 import backend.Module_2.Booking.dto.BookingAnalyticsResponse;
 import backend.Module_2.Booking.dto.BookingRequest;
 import backend.Module_2.Booking.dto.BookingResponse;
 import backend.Module_2.Booking.model.Booking;
 import backend.Module_2.Booking.model.BookingStatus;
-import backend.Module_2.Booking.model.Resource;
-import backend.Module_2.Booking.model.ResourceStatus;
 import backend.Module_2.Booking.repository.BookingRepository;
-import backend.Module_2.Booking.repository.ResourceRepository;
 import backend.Module_4.Auth.model.User;
 import backend.Module_4.Auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,9 +47,15 @@ public class BookingService {
 
         validateTimeRange(req.getBookingDate(), req.getStartTime(), req.getEndTime());
 
-        List<Booking> conflicts = bookingRepository.findConflicts(
-            resource.getId(), req.getBookingDate(), req.getStartTime(), req.getEndTime()
-        );
+        List<Booking> conflicts = bookingRepository
+            .findByResource_IdAndBookingDateAndStatusIn(
+                resource.getId(),
+                req.getBookingDate(),
+                List.of(BookingStatus.PENDING, BookingStatus.APPROVED)
+            )
+            .stream()
+            .filter(b -> b.getStartTime().isBefore(req.getEndTime()) && b.getEndTime().isAfter(req.getStartTime()))
+            .collect(Collectors.toList());
         if (!conflicts.isEmpty()) {
             throw new IllegalStateException(
                 "Scheduling conflict: the resource is already booked during " +
@@ -56,13 +65,17 @@ public class BookingService {
 
         Booking booking = new Booking();
         booking.setResource(resource);
-        booking.setUser(user);
+        booking.setUserId(user.getId());
+        booking.setUserName(user.getName());
+        booking.setUserEmail(user.getEmail());
         booking.setBookingDate(req.getBookingDate());
         booking.setStartTime(req.getStartTime());
         booking.setEndTime(req.getEndTime());
         booking.setPurpose(req.getPurpose());
         booking.setExpectedAttendees(req.getExpectedAttendees());
         booking.setStatus(BookingStatus.PENDING);
+        booking.setCreatedAt(LocalDateTime.now());
+        booking.setUpdatedAt(LocalDateTime.now());
 
         return BookingResponse.from(bookingRepository.save(booking));
     }
@@ -76,9 +89,9 @@ public class BookingService {
         List<Booking> bookings;
         if (status != null && !status.isBlank()) {
             BookingStatus bs = BookingStatus.valueOf(status.toUpperCase());
-            bookings = bookingRepository.findByUserAndStatus(user, bs);
+            bookings = bookingRepository.findByUserEmailAndStatus(user.getEmail(), bs);
         } else {
-            bookings = bookingRepository.findByUserOrderByCreatedAtDesc(user);
+            bookings = bookingRepository.findByUserEmailOrderByCreatedAtDesc(user.getEmail());
         }
         return bookings.stream().map(BookingResponse::from).collect(Collectors.toList());
     }
@@ -98,11 +111,11 @@ public class BookingService {
 
     // ── Get single booking ────────────────────────────────────────────────────
 
-    public BookingResponse getBookingById(Long id, String userEmail, boolean isAdmin) {
+    public BookingResponse getBookingById(String id, String userEmail, boolean isAdmin) {
         Booking booking = bookingRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
 
-        if (!isAdmin && !booking.getUser().getEmail().equals(userEmail)) {
+        if (!isAdmin && !booking.getUserEmail().equals(userEmail)) {
             throw new SecurityException("Access denied");
         }
         return BookingResponse.from(booking);
@@ -110,7 +123,7 @@ public class BookingService {
 
     // ── Admin: approve ────────────────────────────────────────────────────────
 
-    public BookingResponse approveBooking(Long id, String reason) {
+    public BookingResponse approveBooking(String id, String reason) {
         Booking booking = bookingRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
 
@@ -120,15 +133,15 @@ public class BookingService {
 
         // Re-check for approved conflicts at approval time
         long approvedConflicts = bookingRepository
-            .findConflictsExcluding(
+            .findByResource_IdAndBookingDateAndStatusInAndIdNot(
                 booking.getResource().getId(),
                 booking.getBookingDate(),
-                booking.getStartTime(),
-                booking.getEndTime(),
+                List.of(BookingStatus.PENDING, BookingStatus.APPROVED),
                 booking.getId()
             )
             .stream()
             .filter(c -> c.getStatus() == BookingStatus.APPROVED)
+            .filter(c -> c.getStartTime().isBefore(booking.getEndTime()) && c.getEndTime().isAfter(booking.getStartTime()))
             .count();
 
         if (approvedConflicts > 0) {
@@ -139,12 +152,13 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.APPROVED);
         booking.setAdminReason(reason);
+        booking.setUpdatedAt(LocalDateTime.now());
         return BookingResponse.from(bookingRepository.save(booking));
     }
 
     // ── Admin: reject ─────────────────────────────────────────────────────────
 
-    public BookingResponse rejectBooking(Long id, String reason) {
+    public BookingResponse rejectBooking(String id, String reason) {
         Booking booking = bookingRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
 
@@ -153,16 +167,17 @@ public class BookingService {
         }
         booking.setStatus(BookingStatus.REJECTED);
         booking.setAdminReason(reason);
+        booking.setUpdatedAt(LocalDateTime.now());
         return BookingResponse.from(bookingRepository.save(booking));
     }
 
     // ── Cancel booking ────────────────────────────────────────────────────────
 
-    public BookingResponse cancelBooking(Long id, String userEmail, boolean isAdmin, String reason) {
+    public BookingResponse cancelBooking(String id, String userEmail, boolean isAdmin, String reason) {
         Booking booking = bookingRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
 
-        if (!isAdmin && !booking.getUser().getEmail().equals(userEmail)) {
+        if (!isAdmin && !booking.getUserEmail().equals(userEmail)) {
             throw new SecurityException("Access denied");
         }
         if (booking.getStatus() != BookingStatus.APPROVED && booking.getStatus() != BookingStatus.PENDING) {
@@ -170,6 +185,7 @@ public class BookingService {
         }
         booking.setStatus(BookingStatus.CANCELLED);
         booking.setAdminReason(reason);
+        booking.setUpdatedAt(LocalDateTime.now());
         return BookingResponse.from(bookingRepository.save(booking));
     }
 
@@ -178,24 +194,52 @@ public class BookingService {
     public BookingAnalyticsResponse getAnalytics() {
         BookingAnalyticsResponse analytics = new BookingAnalyticsResponse();
 
-        analytics.setTotalBookings(bookingRepository.count());
-        analytics.setPendingCount(bookingRepository.countPending());
-        analytics.setApprovedTodayCount(bookingRepository.countApprovedToday(LocalDate.now()));
+        List<Booking> all = bookingRepository.findAll();
+        analytics.setTotalBookings(all.size());
 
-        // Status breakdown
-        Map<String, Long> breakdown = new LinkedHashMap<>();
-        for (Object[] row : bookingRepository.countByStatus()) {
-            breakdown.put(row[0].toString(), (Long) row[1]);
-        }
+        long pendingCount = all.stream()
+            .filter(b -> b.getStatus() == BookingStatus.PENDING)
+            .count();
+        analytics.setPendingCount(pendingCount);
+
+        long approvedToday = all.stream()
+            .filter(b -> b.getStatus() == BookingStatus.APPROVED)
+            .filter(b -> LocalDate.now().equals(b.getBookingDate()))
+            .count();
+        analytics.setApprovedTodayCount(approvedToday);
+
+        Map<String, Long> breakdown = all.stream()
+            .filter(b -> b.getStatus() != null)
+            .collect(Collectors.groupingBy(
+                b -> b.getStatus().name(),
+                LinkedHashMap::new,
+                Collectors.counting()
+            ));
         analytics.setStatusBreakdown(breakdown);
 
-        // Top 5 resources
-        List<BookingAnalyticsResponse.TopResource> topResources = bookingRepository
-            .findTopResourcesByBookings()
+        Map<String, Long> resourceCounts = all.stream()
+            .filter(b -> b.getStatus() == BookingStatus.APPROVED)
+            .map(Booking::getResource)
+            .filter(Objects::nonNull)
+            .collect(Collectors.groupingBy(Resource::getId, Collectors.counting()));
+
+        Map<String, String> resourceNames = all.stream()
+            .map(Booking::getResource)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toMap(
+                Resource::getId,
+                Resource::getName,
+                (left, right) -> left
+            ));
+
+        List<BookingAnalyticsResponse.TopResource> topResources = resourceCounts.entrySet()
             .stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
             .limit(5)
-            .map(row -> new BookingAnalyticsResponse.TopResource(
-                (Long) row[0], (String) row[1], (Long) row[2]
+            .map(entry -> new BookingAnalyticsResponse.TopResource(
+                entry.getKey(),
+                resourceNames.get(entry.getKey()),
+                entry.getValue()
             ))
             .collect(Collectors.toList());
         analytics.setTopResources(topResources);

@@ -47,7 +47,7 @@ public class BookingController {
 
     /** GET /api/m2/bookings/{id} — owner or admin */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable Long id, Authentication auth) {
+    public ResponseEntity<?> getOne(@PathVariable String id, Authentication auth) {
         try {
             boolean isAdmin = isAdmin(auth);
             return ResponseEntity.ok(bookingService.getBookingById(id, auth.getName(), isAdmin));
@@ -78,7 +78,7 @@ public class BookingController {
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> approve(
-        @PathVariable Long id,
+        @PathVariable String id,
         @RequestBody(required = false) BookingStatusRequest body
     ) {
         try {
@@ -93,7 +93,7 @@ public class BookingController {
     @PatchMapping("/{id}/reject")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> reject(
-        @PathVariable Long id,
+        @PathVariable String id,
         @RequestBody(required = false) BookingStatusRequest body
     ) {
         try {
@@ -107,7 +107,7 @@ public class BookingController {
     /** PATCH /api/m2/bookings/{id}/cancel — owner or admin */
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<?> cancel(
-        @PathVariable Long id,
+        @PathVariable String id,
         @RequestBody(required = false) BookingStatusRequest body,
         Authentication auth
     ) {

@@ -9,12 +9,12 @@ import java.time.LocalTime;
 
 public class BookingResponse {
 
-    private Long id;
-    private Long resourceId;
+    private String id;
+    private String resourceId;
     private String resourceName;
     private String resourceType;
     private String resourceLocation;
-    private Long userId;
+    private String userId;
     private String userName;
     private String userEmail;
     private LocalDate bookingDate;
@@ -34,9 +34,9 @@ public class BookingResponse {
         r.resourceName = b.getResource().getName();
         r.resourceType = b.getResource().getType().name();
         r.resourceLocation = b.getResource().getLocation();
-        r.userId = b.getUser().getId();
-        r.userName = b.getUser().getName();
-        r.userEmail = b.getUser().getEmail();
+        r.userId = b.getUserId();
+        r.userName = b.getUserName();
+        r.userEmail = b.getUserEmail();
         r.bookingDate = b.getBookingDate();
         r.startTime = b.getStartTime();
         r.endTime = b.getEndTime();
@@ -49,12 +49,12 @@ public class BookingResponse {
         return r;
     }
 
-    public Long getId() { return id; }
-    public Long getResourceId() { return resourceId; }
+    public String getId() { return id; }
+    public String getResourceId() { return resourceId; }
     public String getResourceName() { return resourceName; }
     public String getResourceType() { return resourceType; }
     public String getResourceLocation() { return resourceLocation; }
-    public Long getUserId() { return userId; }
+    public String getUserId() { return userId; }
     public String getUserName() { return userName; }
     public String getUserEmail() { return userEmail; }
     public LocalDate getBookingDate() { return bookingDate; }
