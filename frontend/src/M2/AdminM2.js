@@ -2,13 +2,11 @@ import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { isLoggedIn, getUser, isAdmin, logout } from "../M4/authService";
 import AdminBookings from "./AdminBookings";
-import ResourceList from "./ResourceList";
 import Toast, { makeToast } from "./Toast";
 import "./M2.css";
 
 const NAV_ITEMS = [
-  { key: "bookings",   label: "Manage Bookings",   icon: "📋" },
-  { key: "resources",  label: "Manage Resources",  icon: "🏢" },
+  { key: "bookings", label: "Manage Bookings", icon: "📋" },
 ];
 
 function AdminM2() {
@@ -129,6 +127,10 @@ function AdminM2() {
               {item.label}
             </button>
           ))}
+          <button className="m2-nav-item" onClick={() => navigate("/resources")}>
+            <span className="m2-nav-icon">🏢</span>
+            Manage Resources
+          </button>
           <div className="m2-nav-divider" />
           <button className="m2-nav-item" onClick={() => navigate("/m2")}>
             <span className="m2-nav-icon">👤</span>
@@ -148,9 +150,6 @@ function AdminM2() {
         <div className="m2-main">
           {tab === "bookings" && (
             <AdminBookings onToast={addToast} />
-          )}
-          {tab === "resources" && (
-            <ResourceList onBook={() => {}} onToast={addToast} adminMode={true} />
           )}
         </div>
       </div>
