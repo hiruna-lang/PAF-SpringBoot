@@ -3,7 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { fetchResources, createBooking } from "../M2/bookingService";
 import "./ResourceList.css";
 
-const TYPES    = ["ROOM", "LAB", "EQUIPMENT", "SPORTS_FACILITY", "AUDITORIUM"];
+const TYPES    = [
+  "LECTURE_HALL",
+  "LAB",
+  "MEETING_ROOM",
+  "EQUIPMENT",
+  "ROOM",
+  "SPORTS_FACILITY",
+  "AUDITORIUM",
+];
 const STATUSES = ["ACTIVE", "OUT_OF_SERVICE", "MAINTENANCE"];
 
 const TYPE_ICONS = {

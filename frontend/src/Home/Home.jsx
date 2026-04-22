@@ -116,7 +116,7 @@ function NavBell({ navigate }) {
           </div>
 
           {/* List */}
-          <ul className="nav-notif-list" role="list">
+          <ul className="nav-notif-list">
             {preview.length === 0 ? (
               <li className="nav-notif-empty">No notifications yet</li>
             ) : (
