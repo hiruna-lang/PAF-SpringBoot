@@ -78,7 +78,6 @@ function AdminM2() {
               {user?.role}
             </span>
           </div>
-          <button className="btn btn-secondary btn-sm" onClick={() => navigate("/m2")}>User View</button>
           <button className="btn btn-secondary btn-sm" onClick={() => navigate("/")}>Home</button>
           <button className="btn btn-danger btn-sm" onClick={handleLogout}>Logout</button>
         </div>
@@ -101,10 +100,6 @@ function AdminM2() {
             </button>
           ))}
           <div className="m2-nav-divider" />
-          <button className="m2-nav-item" onClick={() => navigate("/m2")}>
-            <span className="m2-nav-icon">👤</span>
-            User View
-          </button>
           <button className="m2-nav-item" onClick={() => navigate("/")}>
             <span className="m2-nav-icon">🏠</span>
             Home
