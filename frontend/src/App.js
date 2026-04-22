@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
 import Home          from './Home/Home';
+import NotificationsPage from './Home/NotificationsPage';
 import AdminPortal from './Admin/AdminPortal';
 import M1 from './M1/m1';
 import M2 from './M2/m2';
@@ -13,6 +14,9 @@ function App() {
     <Routes>
       {/* Home */}
       <Route path="/" element={<Home />} />
+
+      {/* Unified notifications page */}
+      <Route path="/notifications" element={<NotificationsPage />} />
 
       {/* Admin portal */}
       <Route path="/admin" element={<AdminPortal />} />
