@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser, getToken, logout, isLoggedIn, isAdmin, savePhoto, savePhotoToServer, loadProfileFromServer } from "./authService";
+import { useNotifications } from "./useNotifications";
+import NotificationBell from "./NotificationBell";
+import NotificationsPage from "./NotificationsPage";
 import "./Dashboard.css";
 
 function decodeJwt(token) {
@@ -50,6 +53,9 @@ export default function Dashboard() {
   const [photoSaving, setPhotoSaving] = useState(false);
   const [photoMsg, setPhotoMsg]   = useState("");
   const fileInputRef              = useRef(null);
+
+  // Notifications
+  const { notifications, unreadCount, loading: notifLoading, markRead, markAllRead } = useNotifications();
 
   // Load latest photo from server on mount (in case it was saved in a previous session)
   useEffect(() => {
@@ -132,10 +138,11 @@ export default function Dashboard() {
 
         <nav className="db-nav">
           {[
-            { id: "overview", icon: "🏠", label: "Overview" },
-            { id: "profile",  icon: "👤", label: "Profile" },
-            { id: "modules",  icon: "📦", label: "Modules" },
-            { id: "security", icon: "🔐", label: "Security" },
+            { id: "overview",       icon: "🏠", label: "Overview" },
+            { id: "profile",        icon: "👤", label: "Profile" },
+            { id: "modules",        icon: "📦", label: "Modules" },
+            { id: "security",       icon: "🔐", label: "Security" },
+            { id: "notifications",  icon: "🔔", label: "Notifications", badge: unreadCount > 0 ? unreadCount : null },
           ].map(item => (
             <button
               key={item.id}
@@ -144,6 +151,9 @@ export default function Dashboard() {
             >
               <span className="db-nav-icon">{item.icon}</span>
               <span>{item.label}</span>
+              {item.badge != null && (
+                <span className="db-nav-badge">{item.badge > 99 ? "99+" : item.badge}</span>
+              )}
             </button>
           ))}
 
@@ -184,10 +194,11 @@ export default function Dashboard() {
         <header className="db-topbar">
           <div>
             <h1 className="db-topbar-title">
-              {activeTab === "overview" && "Dashboard"}
-              {activeTab === "profile"  && "My Profile"}
-              {activeTab === "modules"  && "Modules"}
-              {activeTab === "security" && "Security"}
+              {activeTab === "overview"      && "Dashboard"}
+              {activeTab === "profile"       && "My Profile"}
+              {activeTab === "modules"       && "Modules"}
+              {activeTab === "security"      && "Security"}
+              {activeTab === "notifications" && "Notifications"}
             </h1>
             <p className="db-topbar-sub">
               {now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
@@ -195,6 +206,14 @@ export default function Dashboard() {
           </div>
           <div className="db-topbar-right">
             <div className="db-clock">{now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
+            <NotificationBell
+              notifications={notifications}
+              unreadCount={unreadCount}
+              loading={notifLoading}
+              markRead={markRead}
+              markAllRead={markAllRead}
+              onViewAll={() => setActiveTab("notifications")}
+            />
             <div className="db-topbar-avatar" onClick={() => setActiveTab("profile")}>
               {photo
                 ? <img src={photo} alt="avatar" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} />
@@ -455,6 +474,17 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* ── NOTIFICATIONS TAB ────────────────────────── */}
+        {activeTab === "notifications" && (
+          <NotificationsPage
+            notifications={notifications}
+            unreadCount={unreadCount}
+            loading={notifLoading}
+            markRead={markRead}
+            markAllRead={markAllRead}
+          />
         )}
       </main>
     </div>
