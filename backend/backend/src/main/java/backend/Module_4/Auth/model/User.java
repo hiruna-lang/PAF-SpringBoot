@@ -1,18 +1,18 @@
 package backend.Module_4.Auth.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "users")
+@Document(collection = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @Indexed(unique = true)
     private String email;
 
     private String password;       // null for Google users
@@ -23,19 +23,16 @@ public class User {
 
     private String googleId;       // Google sub/id for OAuth2 users
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role = Role.USER; // default role
 
-    @Column(columnDefinition = "LONGTEXT")
     private String photoUrl; // profile photo — base64 data URL or Google CDN URL
 
     public User() {}
 
     // Getters & Setters
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

@@ -1,12 +1,10 @@
 package backend.Module_3.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "module3_technicians")
+@Document(collection = "module3_technicians")
 public class Technician {
 
     @Id
@@ -18,7 +16,7 @@ public class Technician {
 
     private String phone;
 
-    @Column(unique = true)
+    @Indexed(unique = true)
     private String email;
 
     private boolean active;

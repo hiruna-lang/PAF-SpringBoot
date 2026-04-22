@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/resources")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ResourceController {
 
     private final ResourceService resourceService;
@@ -30,17 +30,17 @@ public class ResourceController {
     }
 
     @GetMapping("/{id}")
-    public Resource getResourceById(@PathVariable Long id) {
+    public Resource getResourceById(@PathVariable String id) {
         return resourceService.getResourceById(id);
     }
 
     @PutMapping("/{id}")
-    public Resource updateResource(@PathVariable Long id, @RequestBody Resource resource) {
+    public Resource updateResource(@PathVariable String id, @RequestBody Resource resource) {
         return resourceService.updateResource(id, resource);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteResource(@PathVariable Long id) {
+    public String deleteResource(@PathVariable String id) {
         resourceService.deleteResource(id);
         return "Resource deleted successfully";
     }

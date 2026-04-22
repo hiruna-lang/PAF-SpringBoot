@@ -1,9 +1,5 @@
 package backend.Module_3.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
-@Embeddable
 public class TicketAttachment {
 
     private String id;
@@ -16,7 +12,6 @@ public class TicketAttachment {
 
     private Long fileSize;
 
-    @Column(length = 1024)
     private String fileUrl;
 
     public String getId() {

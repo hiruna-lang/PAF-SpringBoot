@@ -5,7 +5,7 @@ import backend.Module_1.enums.ResourceType;
 
 public class ResourceResponseDTO {
 
-    private Long id;
+    private String id;
     private String name;
     private Integer capacity;
     private String location;
@@ -16,7 +16,7 @@ public class ResourceResponseDTO {
     public ResourceResponseDTO() {
     }
 
-    public ResourceResponseDTO(Long id, String name, Integer capacity, String location, String availabilityWindow,
+    public ResourceResponseDTO(String id, String name, Integer capacity, String location, String availabilityWindow,
                                ResourceType type, ResourceStatus status) {
         this.id = id;
         this.name = name;
@@ -27,7 +27,7 @@ public class ResourceResponseDTO {
         this.status = status;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -55,7 +55,7 @@ public class ResourceResponseDTO {
         return status;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

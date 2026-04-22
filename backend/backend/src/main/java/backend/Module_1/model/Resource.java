@@ -2,31 +2,28 @@ package backend.Module_1.model;
 
 import backend.Module_1.enums.ResourceStatus;
 import backend.Module_1.enums.ResourceType;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "resources")
+@Document(collection = "resources")
 public class Resource {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String name;
     private Integer capacity;
     private String location;
     private String availabilityWindow;
 
-    @Enumerated(EnumType.STRING)
     private ResourceType type;
 
-    @Enumerated(EnumType.STRING)
     private ResourceStatus status;
 
     public Resource() {
     }
 
-    public Resource(Long id, String name, Integer capacity, String location, String availabilityWindow,
+    public Resource(String id, String name, Integer capacity, String location, String availabilityWindow,
                     ResourceType type, ResourceStatus status) {
         this.id = id;
         this.name = name;
@@ -37,7 +34,7 @@ public class Resource {
         this.status = status;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -65,7 +62,7 @@ public class Resource {
         return status;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
