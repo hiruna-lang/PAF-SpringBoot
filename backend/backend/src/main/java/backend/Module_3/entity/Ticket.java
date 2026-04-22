@@ -24,6 +24,8 @@ public class Ticket {
 
     private String requesterName;
 
+    private String requesterEmail;
+
     private UserRole requesterRole;
 
     private String resourceLocation;
@@ -98,6 +100,14 @@ public class Ticket {
 
     public void setRequesterName(String requesterName) {
         this.requesterName = requesterName;
+    }
+
+    public String getRequesterEmail() {
+        return requesterEmail;
+    }
+
+    public void setRequesterEmail(String requesterEmail) {
+        this.requesterEmail = requesterEmail;
     }
 
     public UserRole getRequesterRole() {
