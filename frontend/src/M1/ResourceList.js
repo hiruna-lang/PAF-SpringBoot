@@ -270,7 +270,7 @@ function ResourceListPage() {
           <span className="rl-nav-brand-name">Campus Resources</span>
         </div>
         <div className="rl-nav-actions">
-          <button className="rl-btn rl-btn-secondary" onClick={() => navigate("/m2")}>
+          <button className="rl-btn rl-btn-secondary" onClick={() => navigate("/m2?tab=my-bookings")}> 
             📅 My Bookings
           </button>
         </div>
