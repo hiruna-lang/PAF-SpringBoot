@@ -87,7 +87,39 @@ body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: #f0f
 .m2-nav-divider { height: 1px; background: #e2e8f0; margin: .5rem 1rem; }
 
 /* ── Main content area ──────────────────────────────────────────────────── */
-.m2-main { flex: 1; padding: 2rem; overflow-y: auto; max-width: 1200px; }
+.m2-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  max-width: 1200px;
+}
+
+/* ── My Bookings centered page layout ──────────────────────────────────── */
+.my-bookings-page {
+  padding-top: 92px;
+  width: 100%;
+}
+
+.my-bookings-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 32px 40px;
+}
+
+.booking-filter-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.my-bookings-container .page-header,
+.my-bookings-container .stats-row,
+.my-bookings-container .workflow-bar,
+.my-bookings-container .table-card {
+  width: 100%;
+}
 
 /* ── Page header ────────────────────────────────────────────────────────── */
 .page-header {
@@ -419,7 +451,7 @@ tbody tr:hover td { background: #fafbff; }
 .td-resource small { color: #94a3b8; font-size: .78rem; }
 .td-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
 
-/* ── Workflow timeline ───────────────────────────────────────────────────── */
+/* ── Workflow timeline ─────────────────────────────────────────────────── */
 .workflow-bar {
   display: flex;
   align-items: center;
@@ -583,8 +615,14 @@ tbody tr:hover td { background: #fafbff; }
 @media (max-width: 768px) {
   .m2-sidebar { display: none; }
   .m2-main { padding: 1rem; }
+
   .resource-grid { grid-template-columns: 1fr; }
   .booking-detail-grid { grid-template-columns: 1fr; }
+
   .m2-header h1 { font-size: 1rem; }
   .m2-header-subtitle { display: none; }
+
+  .my-bookings-container {
+    padding: 20px 16px 32px;
+  }
 }

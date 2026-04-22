@@ -74,6 +74,16 @@ function M2LoggedInView({ navigate, initialTab }) {
   const navItems = [...NAV_ITEMS];
   const initials = (user?.name || user?.email || "U").charAt(0).toUpperCase();
   const rolePill = user?.role === "ADMIN" ? "#1e40af" : "#166534";
+  const isMyBookingsPage = tab === "my-bookings";
+
+  if (isMyBookingsPage) {
+    return (
+      <div className="m2-wrap">
+        <MyBookings onToast={addToast} />
+        <Toast toasts={toasts} onRemove={removeToast} />
+      </div>
+    );
+  }
 
   return (
     <div className="m2-wrap">
@@ -136,9 +146,6 @@ function M2LoggedInView({ navigate, initialTab }) {
         <div className="m2-main">
           {tab === "resources" && (
             <ResourceList onBook={r => setBookingResource(r)} onToast={addToast} adminMode={false} />
-          )}
-          {tab === "my-bookings" && (
-            <MyBookings onToast={addToast} />
           )}
         </div>
       </div>
