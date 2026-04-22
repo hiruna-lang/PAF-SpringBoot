@@ -674,3 +674,451 @@
     padding: 12px 14px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Booking Modal
+   ═══════════════════════════════════════════════════════════ */
+
+.rl-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  /* Clean dark blur — no messy page behind */
+  background: rgba(10, 15, 30, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: rlOverlayIn 0.2s ease;
+}
+
+@keyframes rlOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.rl-booking-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.28),
+    0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: rlModalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rlModalSlideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ── Modal Header ── */
+.rl-bm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.rl-bm-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rl-bm-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+  border: 1px solid #99f6e4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.rl-bm-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+
+.rl-bm-subtitle {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.rl-bm-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.rl-bm-close:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+/* ── Resource Card inside modal ── */
+.rl-bm-resource-card {
+  margin: 16px 24px;
+  background: linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%);
+  border: 1px solid #ccfbf1;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.rl-bm-resource-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.rl-bm-resource-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.rl-bm-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #334155;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+.rl-bm-type-chip {
+  background: #f0fdfa;
+  border-color: #99f6e4;
+  color: #0f766e;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+
+.rl-bm-avail {
+  font-size: 0.76rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* ── Workflow steps ── */
+.rl-bm-workflow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 24px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  flex-wrap: wrap;
+}
+
+.rl-bm-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.rl-bm-step-active {
+  color: #0f766e;
+}
+
+.rl-bm-step-reject {
+  color: #b91c1c;
+}
+
+.rl-bm-step-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.rl-bm-step-active .rl-bm-step-dot {
+  background: #0f766e;
+  color: #fff;
+}
+
+.rl-bm-step-dot-reject {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca;
+}
+
+.rl-bm-step-arrow {
+  font-size: 0.7rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+/* ── Error ── */
+.rl-bm-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 24px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: #b91c1c;
+  line-height: 1.5;
+}
+
+/* ── Form ── */
+.rl-bm-form {
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rl-bm-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.rl-bm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rl-bm-field-full {
+  grid-column: 1 / -1;
+}
+
+.rl-bm-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.rl-bm-req {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.rl-bm-input {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  background: #fff;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.rl-bm-input:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+}
+
+.rl-bm-textarea {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  background: #fff;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 88px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.rl-bm-textarea:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+}
+
+.rl-bm-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+/* ── Footer ── */
+.rl-bm-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 6px;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 4px;
+}
+
+.rl-bm-btn-cancel {
+  padding: 10px 20px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9px;
+  background: #fff;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rl-bm-btn-cancel:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.rl-bm-btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 9px;
+  background: #0f766e;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(15, 118, 110, 0.3);
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.rl-bm-btn-submit:hover:not(:disabled) {
+  background: #115e59;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(15, 118, 110, 0.38);
+}
+
+.rl-bm-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rl-bm-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: rlSpin 0.6s linear infinite;
+  display: inline-block;
+}
+
+/* ── Status badges (updated) ── */
+.rl-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.rl-status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rl-badge-active {
+  background: #f0fdf4;
+  color: #166534;
+}
+.rl-badge-active::before { background: #22c55e; }
+
+.rl-badge-oos {
+  background: #fef2f2;
+  color: #991b1b;
+}
+.rl-badge-oos::before { background: #ef4444; }
+
+.rl-badge-maint {
+  background: #fffbeb;
+  color: #92400e;
+}
+.rl-badge-maint::before { background: #f59e0b; }
+
+/* ── Responsive ── */
+@media (max-width: 540px) {
+  .rl-bm-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rl-bm-header {
+    padding: 16px 18px 14px;
+  }
+
+  .rl-bm-resource-card,
+  .rl-bm-workflow,
+  .rl-bm-error {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+
+  .rl-bm-form {
+    padding: 0 18px 20px;
+  }
+
+  .rl-bm-footer {
+    flex-direction: column-reverse;
+  }
+
+  .rl-bm-btn-cancel,
+  .rl-bm-btn-submit {
+    width: 100%;
+    justify-content: center;
+  }
+}
