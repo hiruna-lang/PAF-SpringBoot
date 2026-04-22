@@ -11,6 +11,7 @@ import backend.Module_2.Booking.model.BookingStatus;
 import backend.Module_2.Booking.repository.BookingRepository;
 import backend.Module_4.Auth.model.User;
 import backend.Module_4.Auth.repository.UserRepository;
+import backend.Module_4.Notification.service.M4NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class BookingService {
     @Autowired private BookingRepository bookingRepository;
     @Autowired private ResourceRepository resourceRepository;
     @Autowired private UserRepository userRepository;
+    @Autowired private M4NotificationService notificationService;
 
     // ── Create booking ────────────────────────────────────────────────────────
 
@@ -77,7 +79,15 @@ public class BookingService {
         booking.setCreatedAt(LocalDateTime.now());
         booking.setUpdatedAt(LocalDateTime.now());
 
-        return BookingResponse.from(bookingRepository.save(booking));
+        Booking saved = bookingRepository.save(booking);
+
+        // Notify the user their booking is pending
+        notificationService.notifyBookingCreated(
+                user.getEmail(),
+                resource.getName(),
+                req.getBookingDate().toString());
+
+        return BookingResponse.from(saved);
     }
 
     // ── Get my bookings ───────────────────────────────────────────────────────
@@ -153,7 +163,16 @@ public class BookingService {
         booking.setStatus(BookingStatus.APPROVED);
         booking.setAdminReason(reason);
         booking.setUpdatedAt(LocalDateTime.now());
-        return BookingResponse.from(bookingRepository.save(booking));
+        Booking saved = bookingRepository.save(booking);
+
+        // Notify the booking owner
+        notificationService.notifyBookingApproved(
+                saved.getUserEmail(),
+                saved.getResource() != null ? saved.getResource().getName() : "resource",
+                saved.getBookingDate().toString(),
+                reason);
+
+        return BookingResponse.from(saved);
     }
 
     // ── Admin: reject ─────────────────────────────────────────────────────────
@@ -168,7 +187,16 @@ public class BookingService {
         booking.setStatus(BookingStatus.REJECTED);
         booking.setAdminReason(reason);
         booking.setUpdatedAt(LocalDateTime.now());
-        return BookingResponse.from(bookingRepository.save(booking));
+        Booking saved = bookingRepository.save(booking);
+
+        // Notify the booking owner
+        notificationService.notifyBookingRejected(
+                saved.getUserEmail(),
+                saved.getResource() != null ? saved.getResource().getName() : "resource",
+                saved.getBookingDate().toString(),
+                reason);
+
+        return BookingResponse.from(saved);
     }
 
     // ── Cancel booking ────────────────────────────────────────────────────────
@@ -186,7 +214,15 @@ public class BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         booking.setAdminReason(reason);
         booking.setUpdatedAt(LocalDateTime.now());
-        return BookingResponse.from(bookingRepository.save(booking));
+        Booking saved = bookingRepository.save(booking);
+
+        // Notify the booking owner
+        notificationService.notifyBookingCancelled(
+                saved.getUserEmail(),
+                saved.getResource() != null ? saved.getResource().getName() : "resource",
+                saved.getBookingDate().toString());
+
+        return BookingResponse.from(saved);
     }
 
     // ── Analytics (admin) ─────────────────────────────────────────────────────
