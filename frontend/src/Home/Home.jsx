@@ -38,7 +38,7 @@ function Home() {
           <button
             className="nav-menu-btn"
             type="button"
-            onClick={() => navigate("/m1")}
+            onClick={() => navigate("/resources")}
           >
             Resources
           </button>

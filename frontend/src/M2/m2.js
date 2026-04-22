@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isLoggedIn, getUser, isAdmin, logout } from "../M4/authService";
-import ResourceList from "./ResourceList";
 import BookingForm from "./BookingForm";
 import MyBookings from "./MyBookings";
 import AdminM2 from "./AdminM2";
@@ -9,7 +8,6 @@ import Toast, { makeToast } from "./Toast";
 import "./M2.css";
 
 const NAV_ITEMS = [
-  { key: "resources",   label: "Resources",   icon: "🏢" },
   { key: "my-bookings", label: "My Bookings", icon: "📅" },
 ];
 
@@ -50,9 +48,12 @@ function M2UserView() {
 function M2LoggedInView({ navigate }) {
   const user = getUser();
   const admin = isAdmin();
+  const location = useLocation();
 
-  const [tab, setTab] = useState("resources");
-  const [bookingResource, setBookingResource] = useState(null);
+  const [tab, setTab] = useState("my-bookings");
+  const [bookingResource, setBookingResource] = useState(
+    location.state?.bookResource || null
+  );
   const [toasts, setToasts] = useState([]);
 
   const addToast = useCallback((type, message) => {
@@ -125,6 +126,10 @@ function M2LoggedInView({ navigate }) {
               Admin Panel
             </button>
           )}
+          <button className="m2-nav-item" onClick={() => navigate("/resources")}>
+            <span className="m2-nav-icon">🏢</span>
+            Browse Resources
+          </button>
           <button className="m2-nav-item" onClick={() => navigate("/")}>
             <span className="m2-nav-icon">🏠</span>
             Home
@@ -137,9 +142,6 @@ function M2LoggedInView({ navigate }) {
 
         {/* Content */}
         <div className="m2-main">
-          {tab === "resources" && (
-            <ResourceList onBook={r => setBookingResource(r)} onToast={addToast} adminMode={false} />
-          )}
           {tab === "my-bookings" && (
             <MyBookings onToast={addToast} />
           )}
