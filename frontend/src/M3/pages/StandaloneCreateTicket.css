@@ -1,0 +1,228 @@
+/* ═══════════════════════════════════════════════════════════
+   Standalone Create Ticket Page
+   ═══════════════════════════════════════════════════════════ */
+
+.sct-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.08), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.06), transparent 30%),
+    linear-gradient(135deg, #f0fdfa 0%, #e6faf5 100%);
+  font-family: "Manrope", "Segoe UI", sans-serif;
+}
+
+/* ── Navbar ── */
+.sct-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(15, 118, 110, 0.12);
+  box-shadow: 0 1px 8px rgba(15, 118, 110, 0.06);
+  gap: 16px;
+}
+
+.sct-nav-back {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.sct-nav-back:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.sct-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+}
+
+.sct-nav-brand-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0f766e 0%, #16a34a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.3);
+}
+
+.sct-nav-brand-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.sct-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sct-nav-btn-secondary {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.sct-nav-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* ── Container ── */
+.sct-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 36px 24px 60px;
+}
+
+/* ── Success state ── */
+.sct-success {
+  text-align: center;
+  padding: 80px 24px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(22px);
+  border: 1px solid rgba(15, 118, 110, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 20px 60px rgba(15, 118, 110, 0.1);
+}
+
+.sct-success-icon {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.sct-success h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f766e;
+  margin: 0 0 12px;
+}
+
+.sct-success p {
+  font-size: 1rem;
+  color: #64748b;
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 36px;
+}
+
+.sct-success-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Buttons ── */
+.sct-btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.sct-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+}
+
+.sct-btn-secondary {
+  padding: 12px 24px;
+  background: rgba(15, 118, 110, 0.06);
+  color: #0f766e;
+  border: 1px solid rgba(15, 118, 110, 0.2);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.sct-btn-secondary:hover {
+  background: rgba(15, 118, 110, 0.1);
+  border-color: rgba(15, 118, 110, 0.3);
+}
+
+.sct-btn-ghost {
+  padding: 12px 24px;
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sct-btn-ghost:hover {
+  background: #f8fafc;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .sct-nav {
+    padding: 0 16px;
+  }
+
+  .sct-nav-brand-name {
+    display: none;
+  }
+
+  .sct-container {
+    padding: 20px 16px 40px;
+  }
+
+  .sct-success {
+    padding: 48px 20px;
+  }
+
+  .sct-success-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

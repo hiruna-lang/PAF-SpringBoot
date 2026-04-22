@@ -8,10 +8,14 @@ export default function Sidebar({ open, onClose }) {
   const basePath = getRoleBasePath(role);
 
   const items = [
-    { label: "Dashboard", to: basePath, icon: <DashboardIcon /> },
-    { label: "Tickets", to: buildRolePath(role, "tickets"), icon: <TicketIcon /> },
-    ...(role !== "TECHNICIAN" ? [{ label: "Create Ticket", to: buildRolePath(role, "create"), icon: <AddIcon /> }] : []),
-    ...(role === "ADMIN" ? [{ label: "Admin Panel", to: buildRolePath(role, "admin"), icon: <ShieldIcon /> }] : []),
+    { label: "Dashboard", to: basePath,                       icon: <DashboardIcon /> },
+    { label: "Tickets",   to: buildRolePath(role, "tickets"), icon: <TicketIcon /> },
+    ...(role === "ADMIN" || role === "TECHNICIAN"
+      ? [{ label: "Create Ticket", to: buildRolePath(role, "create"), icon: <AddIcon /> }]
+      : []),
+    ...(role === "ADMIN"
+      ? [{ label: "Admin Panel", to: buildRolePath(role, "admin"), icon: <ShieldIcon /> }]
+      : []),
   ];
 
   return (

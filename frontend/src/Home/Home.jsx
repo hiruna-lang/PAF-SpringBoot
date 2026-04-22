@@ -54,7 +54,7 @@ function Home() {
           <button
             className="nav-menu-btn nav-menu-highlight"
             type="button"
-            onClick={() => navigate("/m3/user/create")}
+            onClick={() => navigate("/create-ticket")}
           >
             Create Ticket
           </button>

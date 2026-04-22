@@ -31,7 +31,7 @@ export default function M3Module() {
             <Route path=":roleSegment" element={<ProtectedRoute />}>
               <Route element={<ModuleLayout />}>
                 <Route index element={<DashboardPage />} />
-                <Route element={<ProtectedRoute allowedRoles={["USER", "ADMIN"]} />}>
+                <Route element={<ProtectedRoute allowedRoles={["USER", "ADMIN", "TECHNICIAN"]} />}>
                   <Route path="create" element={<CreateTicketPage />} />
                 </Route>
                 <Route path="tickets" element={<MyTicketsPage />} />
