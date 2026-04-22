@@ -1,5 +1,28 @@
 const BASE_URL = "http://localhost:8081/api/auth";
 
+function normalizeRole(role) {
+  if (!role || typeof role !== "string") return "";
+  return role.trim().toUpperCase().replace(/^ROLE_/, "");
+}
+
+function decodeJwtPayload(token) {
+  try {
+    if (!token) return null;
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const json = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join("")
+    );
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 export async function registerUser(data) {
   const res = await fetch(`${BASE_URL}/register`, {
     method: "POST",
@@ -28,6 +51,7 @@ export function loginWithGoogle() {
 
 /** Persist auth data — now includes role and photoUrl */
 export function saveAuth(authResponse) {
+  const normalizedRole = normalizeRole(authResponse.role) || "USER";
   localStorage.setItem("token", authResponse.token);
   localStorage.setItem("loginTime", Date.now().toString());
   localStorage.setItem(
@@ -36,7 +60,7 @@ export function saveAuth(authResponse) {
       email:    authResponse.email,
       name:     authResponse.name,
       provider: authResponse.provider,
-      role:     authResponse.role || "USER",
+      role:     normalizedRole,
       photoUrl: authResponse.photoUrl || null,
     })
   );
@@ -96,12 +120,19 @@ export function getUser() {
 
 export function getRole() {
   const user = getUser();
-  return user?.role || "USER";
+  const fromUser = normalizeRole(user?.role);
+  if (fromUser) return fromUser;
+
+  const payload = decodeJwtPayload(getToken());
+  const fromToken = normalizeRole(payload?.role);
+  if (fromToken) return fromToken;
+
+  return "USER";
 }
 
 export function isLoggedIn() { return !!getToken(); }
 
-export function hasRole(role) { return getRole() === role; }
+export function hasRole(role) { return getRole() === normalizeRole(role); }
 
 export function isAdmin()   { return hasRole("ADMIN"); }
 export function isManager() { return hasRole("MANAGER") || hasRole("ADMIN"); }

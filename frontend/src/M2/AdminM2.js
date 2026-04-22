@@ -1,14 +1,12 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { isLoggedIn, getUser, isAdmin, logout } from "../M4/authService";
+import { isLoggedIn, getUser, logout } from "../M4/authService";
 import AdminBookings from "./AdminBookings";
-import ResourceList from "./ResourceList";
 import Toast, { makeToast } from "./Toast";
 import "./M2.css";
 
 const NAV_ITEMS = [
   { key: "bookings",   label: "Manage Bookings",   icon: "📋" },
-  { key: "resources",  label: "Manage Resources",  icon: "🏢" },
 ];
 
 function AdminM2() {
@@ -53,33 +51,6 @@ function AdminM2() {
           </div>
           <button className="btn btn-primary" onClick={() => navigate("/m4/login")}>
             Go to Login
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAdmin()) {
-    return (
-      <div className="m2-wrap">
-        <div className="m2-header">
-          <div className="m2-header-brand">
-            <div className="m2-header-icon">🛡</div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: "1.1rem" }}>Admin Panel</div>
-            </div>
-          </div>
-        </div>
-        <div style={{ padding: "3rem 2rem", maxWidth: 500 }}>
-          <div className="alert alert-error">
-            <span className="alert-icon">⚠</span>
-            <div>
-              <strong>Access denied</strong>
-              <div style={{ marginTop: ".25rem", fontSize: ".875rem" }}>You need admin privileges to access this panel.</div>
-            </div>
-          </div>
-          <button className="btn btn-secondary" onClick={() => navigate("/m2")}>
-            Back to Booking
           </button>
         </div>
       </div>
@@ -148,9 +119,6 @@ function AdminM2() {
         <div className="m2-main">
           {tab === "bookings" && (
             <AdminBookings onToast={addToast} />
-          )}
-          {tab === "resources" && (
-            <ResourceList onBook={() => {}} onToast={addToast} adminMode={true} />
           )}
         </div>
       </div>

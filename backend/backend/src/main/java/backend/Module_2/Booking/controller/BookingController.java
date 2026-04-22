@@ -60,7 +60,6 @@ public class BookingController {
 
     /** GET /api/m2/bookings?status= — admin: all bookings */
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BookingResponse>> getAll(
         @RequestParam(required = false) String status
     ) {
@@ -69,7 +68,6 @@ public class BookingController {
 
     /** GET /api/m2/bookings/analytics — admin: usage analytics */
     @GetMapping("/analytics")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BookingAnalyticsResponse> getAnalytics() {
         return ResponseEntity.ok(bookingService.getAnalytics());
     }

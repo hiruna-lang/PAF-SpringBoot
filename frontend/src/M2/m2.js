@@ -8,12 +8,9 @@ import AdminM2 from "./AdminM2";
 import Toast, { makeToast } from "./Toast";
 import "./M2.css";
 
-const NAV_ITEMS = [
-  { key: "resources",   label: "Resources",   icon: "🏢" },
-  { key: "my-bookings", label: "My Bookings", icon: "📅" },
-];
+const NAV_ITEMS = [{ key: "resources", label: "Resources", icon: "🏢" }];
 
-function M2UserView() {
+function M2UserView({ initialTab }) {
   const navigate = useNavigate();
   const loggedIn = isLoggedIn();
 
@@ -44,14 +41,14 @@ function M2UserView() {
     );
   }
 
-  return <M2LoggedInView navigate={navigate} />;
+  return <M2LoggedInView navigate={navigate} initialTab={initialTab} />;
 }
 
-function M2LoggedInView({ navigate }) {
+function M2LoggedInView({ navigate, initialTab }) {
   const user = getUser();
   const admin = isAdmin();
 
-  const [tab, setTab] = useState("resources");
+  const [tab, setTab] = useState(initialTab || "resources");
   const [bookingResource, setBookingResource] = useState(null);
   const [toasts, setToasts] = useState([]);
 
@@ -164,12 +161,15 @@ function M2LoggedInView({ navigate }) {
 function M2() {
   const location = useLocation();
   const isAdminPanelRoute = location.pathname.startsWith("/m2/admin");
+  const searchParams = new URLSearchParams(location.search);
+  const requestedTab = searchParams.get("tab");
+  const initialTab = requestedTab === "my-bookings" ? "my-bookings" : "resources";
 
   if (isAdminPanelRoute) {
     return <AdminM2 />;
   }
 
-  return <M2UserView />;
+  return <M2UserView initialTab={initialTab} />;
 }
 
 export default M2;

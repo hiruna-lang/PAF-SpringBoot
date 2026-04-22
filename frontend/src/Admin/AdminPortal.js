@@ -11,7 +11,7 @@ const MODULES = [
   {
     title: "Module 2",
     subtitle: "Student Portal",
-    path: "/m2",
+    path: "/m2/admin",
   },
   {
     title: "Module 3",
