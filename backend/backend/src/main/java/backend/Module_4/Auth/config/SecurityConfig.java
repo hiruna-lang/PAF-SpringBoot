@@ -21,7 +21,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // enables @PreAuthorize on controllers
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -43,7 +43,6 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ── Public ──────────────────────────────────────────────
                 .requestMatchers(
                     "/api/auth/register",
                     "/api/auth/login",
@@ -52,14 +51,8 @@ public class SecurityConfig {
                     "/oauth2/**",
                     "/login/oauth2/**"
                 ).permitAll()
-
-                // ── Admin only ───────────────────────────────────────────
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                // ── Admin + Manager + Technician ────────────────────────
                 .requestMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER", "TECHNICIAN")
-
-                // ── Any authenticated user ───────────────────────────────
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -74,7 +67,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
