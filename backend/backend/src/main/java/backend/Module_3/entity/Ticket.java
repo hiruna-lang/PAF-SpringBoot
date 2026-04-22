@@ -7,51 +7,33 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "module3_tickets", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_module3_ticket_code", columnNames = "ticket_code")
-})
+@Document(collection = "module3_tickets")
 public class Ticket {
 
     @Id
-    @Column(name = "id")
     private String databaseId;
 
-    @Column(name = "ticket_code", nullable = false, unique = true)
+    @Indexed(unique = true)
     private String ticketCode;
 
     private String requesterId;
 
     private String requesterName;
 
-    @Enumerated(EnumType.STRING)
     private UserRole requesterRole;
 
     private String resourceLocation;
 
     private String category;
 
-    @Enumerated(EnumType.STRING)
     private TicketPriority priority;
 
-    @Enumerated(EnumType.STRING)
     private TicketStatus status;
 
-    @Column(columnDefinition = "TEXT")
     private String description;
 
     private String preferredContact;
@@ -60,49 +42,18 @@ public class Ticket {
 
     private String assignedTechnicianName;
 
-    @Column(columnDefinition = "TEXT")
     private String resolutionNotes;
 
-    @Column(columnDefinition = "TEXT")
     private String rejectionReason;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "module3_ticket_attachments", joinColumns = @JoinColumn(name = "ticket_id"))
-    @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "attachment_id")),
-            @AttributeOverride(name = "originalFileName", column = @Column(name = "original_file_name")),
-            @AttributeOverride(name = "storedFileName", column = @Column(name = "stored_file_name")),
-            @AttributeOverride(name = "contentType", column = @Column(name = "content_type")),
-            @AttributeOverride(name = "fileSize", column = @Column(name = "file_size")),
-            @AttributeOverride(name = "fileUrl", column = @Column(name = "file_url", length = 1024))
-    })
     private List<TicketAttachment> attachments = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "module3_ticket_comments", joinColumns = @JoinColumn(name = "ticket_id"))
-    @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "comment_id")),
-            @AttributeOverride(name = "authorId", column = @Column(name = "author_id")),
-            @AttributeOverride(name = "authorName", column = @Column(name = "author_name")),
-            @AttributeOverride(name = "authorRole", column = @Column(name = "author_role")),
-            @AttributeOverride(name = "message", column = @Column(name = "message", columnDefinition = "TEXT")),
-            @AttributeOverride(name = "createdAt", column = @Column(name = "created_at")),
-            @AttributeOverride(name = "updatedAt", column = @Column(name = "updated_at"))
-    })
     private List<TicketComment> comments = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "module3_ticket_timeline", joinColumns = @JoinColumn(name = "ticket_id"))
-    @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "timeline_id")),
-            @AttributeOverride(name = "status", column = @Column(name = "status")),
-            @AttributeOverride(name = "note", column = @Column(name = "note", columnDefinition = "TEXT")),
-            @AttributeOverride(name = "changedAt", column = @Column(name = "changed_at"))
-    })
     private List<TicketTimelineEntry> timelineEntries = new ArrayList<>();
 
     public void addAttachment(TicketAttachment attachment) {

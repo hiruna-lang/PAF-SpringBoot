@@ -21,7 +21,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // enables @PreAuthorize on controllers
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -43,21 +43,16 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ── Public ──────────────────────────────────────────────
-                    .requestMatchers(
-                            "/api/auth/**",
-                            "/oauth2/**",
-                            "/login/oauth2/**",
-                            "/api/module3/**",    // Module 3 ට පාර ඇරියා ✅
-                            "/api/resources/**",  // Module 1 ට පාර ඇරියා ✅
-                            "/api/notifications/**" // Module 4 ට පාර ඇරියා ✅
-                    ).permitAll()             // මේ පාරවල් වලට ඕන කෙනෙක්ට එන්න දෙන්න
-
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // ── Admin + Manager + Technician ────────────────────────
+                .requestMatchers(
+                    "/api/auth/register",
+                    "/api/auth/login",
+                    "/api/module3/**",
+                    "/api/resources/**",
+                    "/oauth2/**",
+                    "/login/oauth2/**"
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER", "TECHNICIAN")
-
-                // ── Any authenticated user ───────────────────────────────
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -71,8 +66,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3005"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 

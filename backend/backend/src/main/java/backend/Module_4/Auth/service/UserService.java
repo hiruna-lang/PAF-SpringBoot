@@ -73,7 +73,7 @@ public class UserService {
     }
 
     /** Change a user's role — ADMIN only */
-    public User updateRole(Long userId, Role newRole) {
+    public User updateRole(String userId, Role newRole) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(newRole);

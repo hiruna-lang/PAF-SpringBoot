@@ -36,8 +36,8 @@ public class AdminController {
      */
     @PutMapping("/users/{id}/role")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> updateRole(
-            @PathVariable Long id,
+        public ResponseEntity<User> updateRole(
+            @PathVariable String id,
             @RequestBody Map<String, String> body) {
 
         Role newRole = Role.valueOf(body.get("role").toUpperCase());

@@ -1,143 +1,160 @@
-const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081/api/module3";
+import axios from "axios";
 
-function getAuthHeaders() {
+const apiBaseUrl =
+  process.env.REACT_APP_M3_API_BASE_URL ||
+  "http://localhost:8081/api/module3";
+
+const apiClient = axios.create({
+  baseURL: apiBaseUrl,
+});
+
+apiClient.interceptors.request.use((config) => {
   const auth = JSON.parse(localStorage.getItem("smart-campus-m3-auth") || "null");
-  const headers = { "Content-Type": "application/json" };
-  if (auth?.token)       headers["Authorization"]  = `Bearer ${auth.token}`;
-  if (auth?.user?.id)    headers["X-User-Id"]       = auth.user.id;
-  if (auth?.user?.name)  headers["X-User-Name"]     = auth.user.name;
-  if (auth?.role)        headers["X-User-Role"]     = auth.role;
-  return headers;
-}
 
-function getAuthHeadersNoContentType() {
-  const h = getAuthHeaders();
-  delete h["Content-Type"];
-  return h;
-}
+  if (auth?.token) {
+    config.headers.Authorization = `Bearer ${auth.token}`;
+  }
+  if (auth?.user?.id) {
+    config.headers["X-User-Id"] = auth.user.id;
+  }
+  if (auth?.user?.name) {
+    config.headers["X-User-Name"] = auth.user.name;
+  }
+  if (auth?.role) {
+    config.headers["X-User-Role"] = auth.role;
+  }
 
-async function toApiError(res) {
-  let body = {};
-  try { body = await res.json(); } catch { /* ignore */ }
-  const message = body?.message || body?.error || `Request failed with status ${res.status}`;
-  const err = new Error(message);
-  err.status = res.status;
-  err.fieldErrors = body?.fieldErrors || {};
-  return err;
+  return config;
+});
+
+function toApiError(error) {
+  const message =
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    error?.message ||
+    "Unable to complete the request.";
+  const apiError = new Error(message);
+  apiError.status = error?.response?.status;
+  apiError.fieldErrors = error?.response?.data?.fieldErrors || {};
+  return apiError;
 }
 
 function resolveAssetUrl(value) {
-  if (!value) return value;
-  try { return new URL(value, apiBaseUrl).toString(); } catch { return value; }
+  if (!value) {
+    return value;
+  }
+
+  try {
+    return new URL(value, apiBaseUrl).toString();
+  } catch {
+    return value;
+  }
 }
 
 function normalizeTicket(ticket) {
   return {
     ...ticket,
-    attachments: (ticket.attachments || []).map((a) => ({
-      ...a,
-      url: resolveAssetUrl(a.url),
+    attachments: (ticket.attachments || []).map((attachment) => ({
+      ...attachment,
+      url: resolveAssetUrl(attachment.url),
     })),
   };
 }
 
-export async function getTickets(filters = {}) {
-  const params = new URLSearchParams(filters).toString();
-  const url = `${apiBaseUrl}/tickets${params ? `?${params}` : ""}`;
-  const res = await fetch(url, { headers: getAuthHeaders() });
-  if (!res.ok) throw await toApiError(res);
-  const data = await res.json();
-  return data.map(normalizeTicket);
+export async function getTickets(filters) {
+  try {
+    const response = await apiClient.get("/tickets", { params: filters });
+    return response.data.map(normalizeTicket);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function getTechnicians() {
-  const res = await fetch(`${apiBaseUrl}/technicians`, { headers: getAuthHeaders() });
-  if (!res.ok) throw await toApiError(res);
-  return res.json();
+  try {
+    const response = await apiClient.get("/technicians");
+    return response.data;
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function createTechnician(payload) {
-  const res = await fetch(`${apiBaseUrl}/technicians`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw await toApiError(res);
-  return res.json();
+  try {
+    const response = await apiClient.post("/technicians", payload);
+    return response.data;
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function createTicket(payload) {
-  const formData = new FormData();
-  Object.entries(payload).forEach(([key, value]) => {
-    if (key === "attachments") {
-      value.forEach((file) => formData.append("attachments", file.file));
-    } else {
-      formData.append(key, value);
-    }
-  });
-  const res = await fetch(`${apiBaseUrl}/tickets`, {
-    method: "POST",
-    headers: getAuthHeadersNoContentType(),
-    body: formData,
-  });
-  if (!res.ok) throw await toApiError(res);
-  return normalizeTicket(await res.json());
+  try {
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (key === "attachments") {
+        value.forEach((file) => formData.append("attachments", file.file));
+      } else {
+        formData.append(key, value);
+      }
+    });
+    const response = await apiClient.post("/tickets", formData);
+    return normalizeTicket(response.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function assignTechnician(ticketId, technicianId) {
-  const res = await fetch(`${apiBaseUrl}/tickets/${ticketId}/assign`, {
-    method: "PATCH",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ technicianId }),
-  });
-  if (!res.ok) throw await toApiError(res);
-  return normalizeTicket(await res.json());
+  try {
+    const response = await apiClient.patch(`/tickets/${ticketId}/assign`, { technicianId });
+    return normalizeTicket(response.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function updateTicketStatus(ticketId, nextStatus, options = {}) {
-  const res = await fetch(`${apiBaseUrl}/tickets/${ticketId}/status`, {
-    method: "PATCH",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ status: nextStatus, ...options }),
-  });
-  if (!res.ok) throw await toApiError(res);
-  return normalizeTicket(await res.json());
+  try {
+    const response = await apiClient.patch(`/tickets/${ticketId}/status`, { status: nextStatus, ...options });
+    return normalizeTicket(response.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function rejectTicket(ticketId, reason) {
-  const res = await fetch(`${apiBaseUrl}/tickets/${ticketId}/reject`, {
-    method: "PATCH",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ reason }),
-  });
-  if (!res.ok) throw await toApiError(res);
-  return normalizeTicket(await res.json());
+  try {
+    const response = await apiClient.patch(`/tickets/${ticketId}/reject`, { reason });
+    return normalizeTicket(response.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function addComment(ticketId, message) {
-  const res = await fetch(`${apiBaseUrl}/tickets/${ticketId}/comments`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ message }),
-  });
-  if (!res.ok) throw await toApiError(res);
-  return normalizeTicket(await res.json());
+  try {
+    const response = await apiClient.post(`/tickets/${ticketId}/comments`, { message });
+    return normalizeTicket(response.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function updateComment(ticketId, commentId, message) {
-  const res = await fetch(`${apiBaseUrl}/tickets/${ticketId}/comments/${commentId}`, {
-    method: "PATCH",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ message }),
-  });
-  if (!res.ok) throw await toApiError(res);
-  return normalizeTicket(await res.json());
+  try {
+    const response = await apiClient.patch(`/tickets/${ticketId}/comments/${commentId}`, { message });
+    return normalizeTicket(response.data);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function deleteComment(ticketId, commentId) {
-  const res = await fetch(`${apiBaseUrl}/tickets/${ticketId}/comments/${commentId}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-  if (!res.ok) throw await toApiError(res);
+  try {
+    await apiClient.delete(`/tickets/${ticketId}/comments/${commentId}`);
+    return;
+  } catch (error) {
+    throw toApiError(error);
+  }
 }

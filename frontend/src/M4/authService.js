@@ -86,7 +86,12 @@ export function getToken()   { return localStorage.getItem("token"); }
 
 export function getUser() {
   const u = localStorage.getItem("user");
-  return u ? JSON.parse(u) : null;
+  if (!u || u === "undefined") return null;
+  try {
+    return JSON.parse(u);
+  } catch {
+    return null;
+  }
 }
 
 export function getRole() {

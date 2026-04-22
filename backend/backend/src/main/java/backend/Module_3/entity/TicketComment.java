@@ -3,12 +3,6 @@ package backend.Module_3.entity;
 import backend.Module_3.enums.UserRole;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
-@Embeddable
 public class TicketComment {
 
     private String id;
@@ -17,10 +11,8 @@ public class TicketComment {
 
     private String authorName;
 
-    @Enumerated(EnumType.STRING)
     private UserRole authorRole;
 
-    @Column(columnDefinition = "TEXT")
     private String message;
 
     private LocalDateTime createdAt;

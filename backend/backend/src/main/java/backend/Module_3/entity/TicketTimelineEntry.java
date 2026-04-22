@@ -3,20 +3,12 @@ package backend.Module_3.entity;
 import backend.Module_3.enums.TicketStatus;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
-@Embeddable
 public class TicketTimelineEntry {
 
     private String id;
 
-    @Enumerated(EnumType.STRING)
     private TicketStatus status;
 
-    @Column(columnDefinition = "TEXT")
     private String note;
 
     private LocalDateTime changedAt;
