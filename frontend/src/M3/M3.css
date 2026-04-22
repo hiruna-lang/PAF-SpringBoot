@@ -1,20 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Syne:wght@700;800&display=swap");
 
 :root {
-  --m3-bg: #f1f5f9;
+  --m3-bg: #f0fdfa;
   --m3-surface: rgba(255, 255, 255, 0.92);
   --m3-surface-strong: #ffffff;
-  --m3-border: rgba(15, 40, 90, 0.1);
-  --m3-text: #0f1e3d;
+  --m3-border: rgba(15, 118, 110, 0.12);
+  --m3-text: #0b1f1e;
   --m3-muted: #64748b;
-  --m3-primary: #1e3a8a;
-  --m3-primary-dark: #1e2f6a;
-  --m3-accent: #d97706;
+  --m3-primary: #0f766e;
+  --m3-primary-dark: #0d5c56;
+  --m3-accent: #16a34a;
   --m3-danger: #dc2626;
   --m3-warning: #f59e0b;
-  --m3-info: #2563eb;
+  --m3-info: #0891b2;
   --m3-success: #16a34a;
-  --m3-shadow: 0 20px 60px rgba(15, 30, 61, 0.1);
+  --m3-shadow: 0 20px 60px rgba(15, 118, 110, 0.1);
   --m3-radius-xl: 28px;
   --m3-radius-lg: 22px;
   --m3-radius-md: 16px;
@@ -28,9 +28,9 @@ body {
   margin: 0;
   font-family: "Manrope", "Segoe UI", sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(30, 58, 138, 0.06), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(217, 119, 6, 0.06), transparent 30%),
-    linear-gradient(135deg, #f1f5f9 0%, #e8eef7 100%);
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.08), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.06), transparent 30%),
+    linear-gradient(135deg, #f0fdfa 0%, #e6faf5 100%);
   color: var(--m3-text);
   min-height: 100vh;
 }
@@ -62,12 +62,12 @@ button {
   top: 0;
   height: 100vh;
   padding: 28px 22px;
-  background: linear-gradient(180deg, #1e3a8a 0%, #1e2f6a 100%);
+  background: linear-gradient(180deg, #0f766e 0%, #0d5c56 100%);
   color: #f8fafc;
   display: flex;
   flex-direction: column;
   gap: 28px;
-  box-shadow: 4px 0 24px rgba(15, 30, 61, 0.2);
+  box-shadow: 4px 0 24px rgba(15, 118, 110, 0.2);
   z-index: 30;
   overflow: hidden;
 }
@@ -79,7 +79,7 @@ button {
 }
 
 .m3-sidebar__brand span {
-  color: rgba(217, 119, 6, 0.9);
+  color: rgba(110, 231, 183, 0.9);
   font-size: 0.86rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -111,9 +111,9 @@ button {
 }
 
 .m3-nav-link.active {
-  background: rgba(217, 119, 6, 0.2);
-  color: #fbbf24;
-  border-left: 3px solid #d97706;
+  background: rgba(110, 231, 183, 0.2);
+  color: #6ee7b7;
+  border-left: 3px solid #34d399;
 }
 
 .m3-nav-link__icon,
@@ -156,8 +156,8 @@ button {
   gap: 18px;
   padding: 18px 28px;
   backdrop-filter: blur(22px);
-  background: rgba(241, 245, 249, 0.88);
-  border-bottom: 1px solid rgba(30, 58, 138, 0.1);
+  background: rgba(240, 253, 250, 0.88);
+  border-bottom: 1px solid rgba(15, 118, 110, 0.1);
 }
 
 .m3-topbar__title,
@@ -173,7 +173,7 @@ button {
 .m3-detail-header h1 {
   margin: 4px 0 0;
   font-size: 1.6rem;
-  color: #1e3a8a;
+  color: #0f766e;
 }
 
 .m3-content {
@@ -208,7 +208,7 @@ button {
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 24px;
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e2f6a 60%, #2d1f6a 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #0d5c56 60%, #065f46 100%);
   border: none;
   color: #ffffff;
 }
@@ -299,7 +299,7 @@ button {
 .m3-hero-card__spotlight {
   padding: 20px;
   border-radius: 16px;
-  background: rgba(30, 58, 138, 0.4);
+  background: rgba(15, 118, 110, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
@@ -373,7 +373,7 @@ button {
 
 .m3-metric-card {
   padding: 22px;
-  border-top: 3px solid #d97706;
+  border-top: 3px solid #16a34a;
 }
 
 .m3-metric-card span,
@@ -390,7 +390,7 @@ button {
   display: block;
   margin: 10px 0 8px;
   font-size: 2rem;
-  color: #1e3a8a;
+  color: #0f766e;
 }
 
 .m3-two-column,
@@ -420,7 +420,7 @@ button {
 .m3-alert-card h3,
 .m3-empty-state h3 {
   margin: 6px 0 8px;
-  color: #1e3a8a;
+  color: #0f766e;
 }
 
 .m3-toolbar,
@@ -455,10 +455,10 @@ button {
 }
 
 .m3-primary-button {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
+  background: linear-gradient(135deg, #16a34a, #22c55e);
   color: #ffffff;
   font-weight: 800;
-  box-shadow: 0 4px 20px rgba(217, 119, 6, 0.3);
+  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.3);
 }
 
 .m3-primary-button--small {
@@ -466,9 +466,9 @@ button {
 }
 
 .m3-secondary-button {
-  background: rgba(30, 58, 138, 0.06);
-  color: #1e3a8a;
-  border: 1px solid rgba(30, 58, 138, 0.2);
+  background: rgba(15, 118, 110, 0.06);
+  color: #0f766e;
+  border: 1px solid rgba(15, 118, 110, 0.2);
 }
 
 .m3-hero-card .m3-secondary-button {
@@ -485,9 +485,9 @@ button {
 }
 
 .m3-primary-button:hover {
-  background: linear-gradient(135deg, #b45309, #d97706);
+  background: linear-gradient(135deg, #15803d, #16a34a);
   transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(217, 119, 6, 0.4);
+  box-shadow: 0 8px 25px rgba(22, 163, 74, 0.4);
 }
 
 .m3-secondary-button:hover,
@@ -517,8 +517,8 @@ button {
   width: 46px;
   height: 46px;
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(30, 58, 138, 0.15);
-  color: #1e3a8a;
+  border: 1px solid rgba(15, 118, 110, 0.15);
+  color: #0f766e;
 }
 
 .m3-profile-pill,
@@ -526,13 +526,13 @@ button {
   padding: 8px 14px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(30, 58, 138, 0.15);
+  border: 1px solid rgba(15, 118, 110, 0.15);
 }
 
 .m3-role-switch select {
   border: none;
   background: transparent;
-  color: #0f1e3d;
+  color: #0b1f1e;
   font-weight: 700;
 }
 
@@ -565,11 +565,11 @@ button {
 .m3-form-field textarea,
 .m3-search-field input {
   width: 100%;
-  border: 1.5px solid rgba(30, 58, 138, 0.15);
+  border: 1.5px solid rgba(15, 118, 110, 0.15);
   border-radius: 12px;
   background: #ffffff;
   padding: 14px 16px;
-  color: #0f1e3d;
+  color: #0b1f1e;
   outline: none;
 }
 
@@ -581,8 +581,8 @@ button {
 .m3-form-field select:focus,
 .m3-form-field textarea:focus,
 .m3-search-field input:focus {
-  border-color: #d97706;
-  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
 }
 
 .m3-field-error {
@@ -596,8 +596,8 @@ button {
 }
 
 .m3-upload__dropzone {
-  border: 1.5px dashed rgba(30, 58, 138, 0.25);
-  background: rgba(30, 58, 138, 0.03);
+  border: 1.5px dashed rgba(15, 118, 110, 0.25);
+  background: rgba(15, 118, 110, 0.03);
   border-radius: 16px;
   padding: 22px;
   display: grid;
@@ -624,7 +624,7 @@ button {
   border-radius: 16px;
   overflow: hidden;
   background: #ffffff;
-  border: 1px solid rgba(30, 58, 138, 0.1);
+  border: 1px solid rgba(15, 118, 110, 0.1);
 }
 
 .m3-attachment-card img {
@@ -656,14 +656,14 @@ button {
   padding: 16px 20px;
   border-radius: 16px;
   background: #ffffff;
-  border: 1px solid rgba(30, 58, 138, 0.08);
+  border: 1px solid rgba(15, 118, 110, 0.08);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .m3-ticket-row:hover,
 .m3-dashboard-list__item:hover {
-  border-color: rgba(217, 119, 6, 0.3);
-  box-shadow: 0 4px 16px rgba(30, 58, 138, 0.08);
+  border-color: rgba(22, 163, 74, 0.3);
+  box-shadow: 0 4px 16px rgba(15, 118, 110, 0.08);
 }
 
 .m3-ticket-row {
@@ -697,14 +697,14 @@ button {
 
 .m3-badge--open,
 .m3-badge--priority-medium {
-  background: rgba(30, 58, 138, 0.1);
-  color: #1e3a8a;
+  background: rgba(15, 118, 110, 0.1);
+  color: #0f766e;
 }
 
 .m3-badge--in_progress,
 .m3-badge--priority-high {
-  background: rgba(217, 119, 6, 0.12);
-  color: #b45309;
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
 }
 
 .m3-badge--resolved {
@@ -728,7 +728,7 @@ button {
   border: none;
   background: transparent;
   padding: 0;
-  color: #d97706;
+  color: #16a34a;
   font-weight: 700;
 }
 
@@ -749,7 +749,7 @@ button {
 .m3-table td {
   padding: 14px 16px;
   text-align: left;
-  border-bottom: 1px solid rgba(30, 58, 138, 0.07);
+  border-bottom: 1px solid rgba(15, 118, 110, 0.07);
   vertical-align: top;
 }
 
@@ -777,8 +777,8 @@ button {
   gap: 6px;
   padding: 16px;
   border-radius: 14px;
-  background: rgba(30, 58, 138, 0.04);
-  border: 1px solid rgba(30, 58, 138, 0.1);
+  background: rgba(15, 118, 110, 0.04);
+  border: 1px solid rgba(15, 118, 110, 0.1);
 }
 
 .m3-copy-block,
@@ -786,8 +786,8 @@ button {
   margin-top: 20px;
   padding: 18px;
   border-radius: 16px;
-  background: rgba(30, 58, 138, 0.04);
-  border: 1px solid rgba(30, 58, 138, 0.1);
+  background: rgba(15, 118, 110, 0.04);
+  border: 1px solid rgba(15, 118, 110, 0.1);
 }
 
 .m3-alert-card--danger {
@@ -816,7 +816,7 @@ button {
 }
 
 .m3-timeline__item.is-active {
-  color: #0f1e3d;
+  color: #0b1f1e;
 }
 
 .m3-timeline__dot {
@@ -824,14 +824,14 @@ button {
   height: 12px;
   margin-top: 5px;
   border-radius: 999px;
-  background: rgba(30, 58, 138, 0.15);
-  border: 2px solid rgba(30, 58, 138, 0.2);
+  background: rgba(15, 118, 110, 0.15);
+  border: 2px solid rgba(15, 118, 110, 0.2);
 }
 
 .m3-timeline__item.is-active .m3-timeline__dot {
-  background: #d97706;
-  border-color: #d97706;
-  box-shadow: 0 0 8px rgba(217, 119, 6, 0.4);
+  background: #16a34a;
+  border-color: #16a34a;
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.4);
 }
 
 .m3-comment-thread {
@@ -845,14 +845,14 @@ button {
   padding: 14px 18px;
   border-radius: 18px 18px 18px 6px;
   background: #f8fafc;
-  border: 1px solid rgba(30, 58, 138, 0.1);
+  border: 1px solid rgba(15, 118, 110, 0.1);
 }
 
 .m3-comment-bubble--owner {
   margin-left: auto;
   border-radius: 18px 18px 6px 18px;
-  background: rgba(30, 58, 138, 0.06);
-  border-color: rgba(30, 58, 138, 0.15);
+  background: rgba(15, 118, 110, 0.06);
+  border-color: rgba(15, 118, 110, 0.15);
 }
 
 .m3-comment-bubble__meta {
@@ -877,9 +877,9 @@ button {
 .m3-empty-inline {
   padding: 18px;
   border-radius: 14px;
-  background: rgba(30, 58, 138, 0.04);
+  background: rgba(15, 118, 110, 0.04);
   color: #64748b;
-  border: 1px solid rgba(30, 58, 138, 0.08);
+  border: 1px solid rgba(15, 118, 110, 0.08);
 }
 
 .m3-empty-state {
@@ -890,7 +890,7 @@ button {
 .m3-empty-state__icon {
   font-size: 2rem;
   margin-bottom: 10px;
-  color: #d97706;
+  color: #16a34a;
 }
 
 .m3-search-field {
@@ -900,21 +900,21 @@ button {
   padding: 0 14px;
   border-radius: 12px;
   background: #ffffff;
-  border: 1.5px solid rgba(30, 58, 138, 0.15);
+  border: 1.5px solid rgba(15, 118, 110, 0.15);
 }
 
 .m3-search-field input {
   border: none;
   padding-left: 0;
   background: transparent;
-  color: #0f1e3d;
+  color: #0b1f1e;
 }
 
 .m3-modal-backdrop,
 .m3-sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 30, 61, 0.4);
+  background: rgba(15, 118, 110, 0.3);
   backdrop-filter: blur(4px);
   z-index: 40;
 }
@@ -924,8 +924,8 @@ button {
   margin: 10vh auto;
   background: #ffffff;
   border-radius: 24px;
-  border: 1px solid rgba(30, 58, 138, 0.15);
-  box-shadow: 0 30px 90px rgba(15, 30, 61, 0.15);
+  border: 1px solid rgba(15, 118, 110, 0.15);
+  box-shadow: 0 30px 90px rgba(15, 118, 110, 0.15);
   overflow: hidden;
 }
 
@@ -938,7 +938,7 @@ button {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  border-bottom: 1px solid rgba(30, 58, 138, 0.1);
+  border-bottom: 1px solid rgba(15, 118, 110, 0.1);
 }
 
 .m3-modal__body {
@@ -947,7 +947,7 @@ button {
 
 .m3-modal__footer {
   justify-content: flex-end;
-  border-top: 1px solid rgba(30, 58, 138, 0.1);
+  border-top: 1px solid rgba(15, 118, 110, 0.1);
 }
 
 .m3-toast-stack {
@@ -968,8 +968,8 @@ button {
   justify-content: space-between;
   gap: 14px;
   background: #ffffff;
-  border: 1px solid rgba(30, 58, 138, 0.12);
-  box-shadow: 0 8px 32px rgba(15, 30, 61, 0.12);
+  border: 1px solid rgba(15, 118, 110, 0.12);
+  box-shadow: 0 8px 32px rgba(15, 118, 110, 0.12);
 }
 
 .m3-toast--success {
@@ -977,7 +977,7 @@ button {
 }
 
 .m3-toast--info {
-  border-color: rgba(30, 58, 138, 0.25);
+  border-color: rgba(15, 118, 110, 0.25);
 }
 
 .m3-toast p {
@@ -1037,7 +1037,7 @@ button {
   border: 1px solid var(--m3-border);
   border-radius: var(--m3-radius-xl);
   padding: 40px;
-  box-shadow: 0 24px 60px rgba(15, 30, 61, 0.08);
+  box-shadow: 0 24px 60px rgba(15, 118, 110, 0.08);
   border-top: 5px solid var(--m3-accent);
   position: relative;
   overflow: hidden;
@@ -1050,7 +1050,7 @@ button {
   right: 0;
   width: 150px;
   height: 150px;
-  background: radial-gradient(circle, rgba(217, 119, 6, 0.08), transparent 70%);
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.08), transparent 70%);
   pointer-events: none;
 }
 
@@ -1068,8 +1068,8 @@ button {
 
 .m3-access__signal-item {
   padding: 22px;
-  background: rgba(30, 58, 138, 0.02);
-  border: 1px solid rgba(30, 58, 138, 0.08);
+  background: rgba(15, 118, 110, 0.02);
+  border: 1px solid rgba(15, 118, 110, 0.08);
   border-left: 4px solid var(--m3-primary);
   border-radius: var(--m3-radius-lg);
   transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
@@ -1077,8 +1077,8 @@ button {
 
 .m3-access__signal-item:hover {
   transform: translateX(6px);
-  background: rgba(30, 58, 138, 0.05);
-  border-color: rgba(30, 58, 138, 0.15);
+  background: rgba(15, 118, 110, 0.05);
+  border-color: rgba(15, 118, 110, 0.15);
 }
 
 .m3-access__signal-item strong {
@@ -1110,7 +1110,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  box-shadow: 0 12px 36px rgba(15, 30, 61, 0.06);
+  box-shadow: 0 12px 36px rgba(15, 118, 110, 0.06);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -1131,8 +1131,8 @@ button {
 
 .m3-access-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 30px 60px rgba(15, 30, 61, 0.12);
-  border-color: rgba(217, 119, 6, 0.3);
+  box-shadow: 0 30px 60px rgba(15, 118, 110, 0.12);
+  border-color: rgba(22, 163, 74, 0.3);
 }
 
 .m3-access-card:hover::after {
@@ -1146,12 +1146,12 @@ button {
   width: fit-content;
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(217, 119, 6, 0.12);
+  background: rgba(22, 163, 74, 0.12);
   color: var(--m3-accent);
   font-weight: 800;
   letter-spacing: 0.06em;
   font-size: 0.8rem;
-  border: 1px solid rgba(217, 119, 6, 0.2);
+  border: 1px solid rgba(22, 163, 74, 0.2);
 }
 
 .m3-access-card h2 {
@@ -1187,14 +1187,14 @@ button {
 
 .m3-access-card .m3-primary-button {
   background: linear-gradient(135deg, var(--m3-primary), var(--m3-primary-dark));
-  box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25);
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.25);
   padding: 10px 18px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .m3-access-card:hover .m3-primary-button {
-  background: linear-gradient(135deg, var(--m3-accent), #f59e0b);
-  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.35);
+  background: linear-gradient(135deg, var(--m3-accent), #22c55e);
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.35);
 }
 
 .m3-loading {
@@ -1208,8 +1208,8 @@ button {
   width: 18px;
   height: 18px;
   border-radius: 999px;
-  border: 2px solid rgba(30, 58, 138, 0.15);
-  border-top-color: #d97706;
+  border: 2px solid rgba(15, 118, 110, 0.15);
+  border-top-color: #16a34a;
   animation: m3-spin 0.8s linear infinite;
 }
 
@@ -1224,7 +1224,6 @@ button {
 }
 
 @media (max-width: 1200px) {
-
   .m3-metric-grid,
   .m3-access__roles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1269,7 +1268,6 @@ button {
 }
 
 @media (max-width: 720px) {
-
   .m3-content,
   .m3-access {
     padding: 18px;
