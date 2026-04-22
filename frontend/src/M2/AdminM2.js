@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { isLoggedIn, getUser, isAdmin, logout } from "../M4/authService";
+import { isLoggedIn, getUser, logout } from "../M4/authService";
 import AdminBookings from "./AdminBookings";
 import Toast, { makeToast } from "./Toast";
 import "./M2.css";
 
 const NAV_ITEMS = [
-  { key: "bookings", label: "Manage Bookings", icon: "📋" },
+  { key: "bookings",   label: "Manage Bookings",   icon: "📋" },
 ];
 
 function AdminM2() {
@@ -57,33 +57,6 @@ function AdminM2() {
     );
   }
 
-  if (!isAdmin()) {
-    return (
-      <div className="m2-wrap">
-        <div className="m2-header">
-          <div className="m2-header-brand">
-            <div className="m2-header-icon">🛡</div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: "1.1rem" }}>Admin Panel</div>
-            </div>
-          </div>
-        </div>
-        <div style={{ padding: "3rem 2rem", maxWidth: 500 }}>
-          <div className="alert alert-error">
-            <span className="alert-icon">⚠</span>
-            <div>
-              <strong>Access denied</strong>
-              <div style={{ marginTop: ".25rem", fontSize: ".875rem" }}>You need admin privileges to access this panel.</div>
-            </div>
-          </div>
-          <button className="btn btn-secondary" onClick={() => navigate("/m2")}>
-            Back to Booking
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   const initials = (user?.name || user?.email || "A").charAt(0).toUpperCase();
 
   return (
@@ -105,7 +78,6 @@ function AdminM2() {
               {user?.role}
             </span>
           </div>
-          <button className="btn btn-secondary btn-sm" onClick={() => navigate("/m2")}>User View</button>
           <button className="btn btn-secondary btn-sm" onClick={() => navigate("/")}>Home</button>
           <button className="btn btn-danger btn-sm" onClick={handleLogout}>Logout</button>
         </div>
@@ -127,15 +99,7 @@ function AdminM2() {
               {item.label}
             </button>
           ))}
-          <button className="m2-nav-item" onClick={() => navigate("/resources")}>
-            <span className="m2-nav-icon">🏢</span>
-            Manage Resources
-          </button>
           <div className="m2-nav-divider" />
-          <button className="m2-nav-item" onClick={() => navigate("/m2")}>
-            <span className="m2-nav-icon">👤</span>
-            User View
-          </button>
           <button className="m2-nav-item" onClick={() => navigate("/")}>
             <span className="m2-nav-icon">🏠</span>
             Home

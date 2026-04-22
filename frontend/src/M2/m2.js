@@ -1,17 +1,16 @@
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isLoggedIn, getUser, isAdmin, logout } from "../M4/authService";
+import ResourceList from "./ResourceList";
 import BookingForm from "./BookingForm";
 import MyBookings from "./MyBookings";
 import AdminM2 from "./AdminM2";
 import Toast, { makeToast } from "./Toast";
 import "./M2.css";
 
-const NAV_ITEMS = [
-  { key: "my-bookings", label: "My Bookings", icon: "📅" },
-];
+const NAV_ITEMS = [{ key: "resources", label: "Resources", icon: "🏢" }];
 
-function M2UserView() {
+function M2UserView({ initialTab }) {
   const navigate = useNavigate();
   const loggedIn = isLoggedIn();
 
@@ -42,18 +41,15 @@ function M2UserView() {
     );
   }
 
-  return <M2LoggedInView navigate={navigate} />;
+  return <M2LoggedInView navigate={navigate} initialTab={initialTab} />;
 }
 
-function M2LoggedInView({ navigate }) {
+function M2LoggedInView({ navigate, initialTab }) {
   const user = getUser();
   const admin = isAdmin();
-  const location = useLocation();
 
-  const [tab, setTab] = useState("my-bookings");
-  const [bookingResource, setBookingResource] = useState(
-    location.state?.bookResource || null
-  );
+  const [tab, setTab] = useState(initialTab || "resources");
+  const [bookingResource, setBookingResource] = useState(null);
   const [toasts, setToasts] = useState([]);
 
   const addToast = useCallback((type, message) => {
@@ -78,6 +74,16 @@ function M2LoggedInView({ navigate }) {
   const navItems = [...NAV_ITEMS];
   const initials = (user?.name || user?.email || "U").charAt(0).toUpperCase();
   const rolePill = user?.role === "ADMIN" ? "#1e40af" : "#166534";
+  const isMyBookingsPage = tab === "my-bookings";
+
+  if (isMyBookingsPage) {
+    return (
+      <div className="m2-wrap">
+        <MyBookings onToast={addToast} />
+        <Toast toasts={toasts} onRemove={removeToast} />
+      </div>
+    );
+  }
 
   return (
     <div className="m2-wrap">
@@ -126,10 +132,6 @@ function M2LoggedInView({ navigate }) {
               Admin Panel
             </button>
           )}
-          <button className="m2-nav-item" onClick={() => navigate("/resources")}>
-            <span className="m2-nav-icon">🏢</span>
-            Browse Resources
-          </button>
           <button className="m2-nav-item" onClick={() => navigate("/")}>
             <span className="m2-nav-icon">🏠</span>
             Home
@@ -142,8 +144,8 @@ function M2LoggedInView({ navigate }) {
 
         {/* Content */}
         <div className="m2-main">
-          {tab === "my-bookings" && (
-            <MyBookings onToast={addToast} />
+          {tab === "resources" && (
+            <ResourceList onBook={r => setBookingResource(r)} onToast={addToast} adminMode={false} />
           )}
         </div>
       </div>
@@ -166,12 +168,15 @@ function M2LoggedInView({ navigate }) {
 function M2() {
   const location = useLocation();
   const isAdminPanelRoute = location.pathname.startsWith("/m2/admin");
+  const searchParams = new URLSearchParams(location.search);
+  const requestedTab = searchParams.get("tab");
+  const initialTab = requestedTab === "my-bookings" ? "my-bookings" : "resources";
 
   if (isAdminPanelRoute) {
     return <AdminM2 />;
   }
 
-  return <M2UserView />;
+  return <M2UserView initialTab={initialTab} />;
 }
 
 export default M2;

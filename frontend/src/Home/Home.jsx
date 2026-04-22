@@ -46,7 +46,7 @@ function Home() {
           <button
             className="nav-menu-btn"
             type="button"
-            onClick={() => navigate("/bookings")}
+            onClick={() => navigate("/m2?tab=my-bookings")}
           >
             My Booking
           </button>

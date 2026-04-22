@@ -16,7 +16,7 @@ function statusBadge(s) {
 function AdminBookings({ onToast }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("PENDING");
+  const [filter, setFilter] = useState("");
   const [analytics, setAnalytics] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [actionModal, setActionModal] = useState(null); // { booking, action }
