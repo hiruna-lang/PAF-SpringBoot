@@ -42,7 +42,8 @@ function Register() {
         password: form.password, phoneNumber: form.phoneNumber,
       });
       saveAuth(response);
-      navigate(response.role === "ADMIN" ? "/m4/admin" : "/m4/dashboard");
+      // After sign-up, everyone lands on their dashboard first
+      navigate("/m4/dashboard");
     } catch (err) {
       setApiError(err.message);
     } finally {
