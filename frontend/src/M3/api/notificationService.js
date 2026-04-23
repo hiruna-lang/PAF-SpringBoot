@@ -16,7 +16,7 @@ function getAuthHeaders() {
     if (m4User?.email) headers["X-User-Id"]   = m4User.email;
     if (m4User?.email) headers["X-User-Email"] = m4User.email;
     const m4Role = m4User?.role || "USER";
-    const m3Role = m4Role === "ADMIN" || m4Role === "MANAGER" ? "ADMIN"
+    const m3Role = m4Role === "ADMIN" ? "ADMIN"
                  : m4Role === "TECHNICIAN" ? "TECHNICIAN"
                  : "USER";
     headers["X-User-Role"] = m3Role;
