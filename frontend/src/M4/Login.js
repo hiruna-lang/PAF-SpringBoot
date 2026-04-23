@@ -34,8 +34,8 @@ function Login() {
     try {
       const response = await loginUser(form);
       saveAuth(response);
-      const normalizedRole = String(response.role || "").toUpperCase().replace(/^ROLE_/, "");
-      navigate(normalizedRole === "ADMIN" ? "/m4/admin" : "/m4/dashboard");
+      // Local login always goes to dashboard — navigate from there if needed
+      navigate("/m4/dashboard");
     } catch (err) {
       setApiError(err.message);
     } finally {
