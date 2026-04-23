@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { getUser, logout, authFetch } from "./authService";
 import "./M4.css";
 
-const ROLES    = ["USER", "TECHNICIAN", "MANAGER", "ADMIN"];
+const ROLES    = ["USER", "TECHNICIAN", "ADMIN"];
 const BACKEND  = "http://localhost:8081";
 
 const ROLE_ICONS = {
   ADMIN:      "👑",
-  MANAGER:    "🏢",
   TECHNICIAN: "🔧",
   USER:       "👤",
 };
@@ -116,7 +115,6 @@ export default function AdminDashboard() {
           {[
             { label: "Total Users",  value: users.length },
             { label: "Admins",       value: countByRole("ADMIN") },
-            { label: "Managers",     value: countByRole("MANAGER") },
             { label: "Technicians",  value: countByRole("TECHNICIAN") },
             { label: "Users",        value: countByRole("USER") },
           ].map((s, i) => (
@@ -167,6 +165,7 @@ export default function AdminDashboard() {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Provider</th>
@@ -178,6 +177,11 @@ export default function AdminDashboard() {
                   {users.map((u, i) => (
                     <tr key={u.id} className={u.email === currentUser?.email ? "current-user-row" : ""}>
                       <td>{i + 1}</td>
+                      <td>
+                        <span className="user-id-badge" data-prefix={u.id?.split("-")[0]}>
+                          {u.id || "—"}
+                        </span>
+                      </td>
                       <td style={{ fontWeight: 600 }}>{u.name || "—"}</td>
                       <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>{u.email}</td>
                       <td>
@@ -222,8 +226,8 @@ export default function AdminDashboard() {
           <button className="admin-nav-btn" onClick={() => navigate("/m4/dashboard")}>
             👤 My Profile
           </button>
-          <button className="admin-nav-btn" onClick={() => navigate("/")}>
-            🌐 Home
+          <button className="admin-nav-btn" onClick={() => navigate("/home")}>
+            🌐 Explore
           </button>
         </div>
 
