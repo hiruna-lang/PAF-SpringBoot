@@ -49,14 +49,23 @@ export function loginWithGoogle() {
   window.location.href = "http://localhost:8081/oauth2/authorization/google";
 }
 
-/** Persist auth data — now includes role and photoUrl */
+/** Persist auth data — includes userId, role, and photoUrl */
 export function saveAuth(authResponse) {
   const normalizedRole = normalizeRole(authResponse.role) || "USER";
+
+  // userId may come from the response body or from the JWT payload
+  let userId = authResponse.userId || null;
+  if (!userId) {
+    const payload = decodeJwtPayload(authResponse.token);
+    userId = payload?.userId || null;
+  }
+
   localStorage.setItem("token", authResponse.token);
   localStorage.setItem("loginTime", Date.now().toString());
   localStorage.setItem(
     "user",
     JSON.stringify({
+      userId:   userId,
       email:    authResponse.email,
       name:     authResponse.name,
       provider: authResponse.provider,
@@ -118,6 +127,15 @@ export function getUser() {
   }
 }
 
+export function getUserId() {
+  const user = getUser();
+  if (user?.userId) return user.userId;
+
+  // Fallback: extract from JWT if not in localStorage
+  const payload = decodeJwtPayload(getToken());
+  return payload?.userId || null;
+}
+
 export function getRole() {
   const user = getUser();
   const fromUser = normalizeRole(user?.role);
@@ -135,7 +153,6 @@ export function isLoggedIn() { return !!getToken(); }
 export function hasRole(role) { return getRole() === normalizeRole(role); }
 
 export function isAdmin()   { return hasRole("ADMIN"); }
-export function isManager() { return hasRole("MANAGER") || hasRole("ADMIN"); }
 
 export function logout() {
   localStorage.removeItem("token");
