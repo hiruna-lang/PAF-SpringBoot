@@ -209,7 +209,7 @@ function Home() {
   return (
     <div className="home">
       <nav className="nav">
-        <a className="nav-brand" href="#top">
+        <a className="nav-brand" href="/home">
           <span className="nav-brand-icon">SC</span>
           <span className="nav-brand-name">SmartCampus</span>
         </a>
@@ -246,7 +246,7 @@ function Home() {
           <button
             className="nav-icon-btn nav-profile-btn"
             type="button"
-            onClick={() => navigate(isLoggedIn() ? "/m4/dashboard" : "/m4/login")}
+            onClick={() => navigate(isLoggedIn() ? "/m4/dashboard?tab=profile" : "/m4/login")}
             aria-label="Profile"
             title={isLoggedIn() ? (user?.name || "Profile") : "Sign in"}
           >
