@@ -18,9 +18,9 @@ function getAuthHeaders() {
     if (m4User?.name)  headers["X-User-Name"] = m4User.name;
     if (m4User?.email) headers["X-User-Id"]   = m4User.email; // use email as userId
     if (m4User?.email) headers["X-User-Email"] = m4User.email;
-    // Map M4 role to M3 role (MANAGER → ADMIN for M3 purposes)
+    // Map M4 role to M3 role
     const m4Role = m4User?.role || "USER";
-    const m3Role = m4Role === "ADMIN" || m4Role === "MANAGER" ? "ADMIN"
+    const m3Role = m4Role === "ADMIN" ? "ADMIN"
                  : m4Role === "TECHNICIAN" ? "TECHNICIAN"
                  : "USER";
     headers["X-User-Role"] = m3Role;
