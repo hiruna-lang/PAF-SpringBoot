@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { getUser, getToken, logout, isLoggedIn, isAdmin, savePhoto, savePhotoToServer, loadProfileFromServer } from "./authService";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getUser, getToken, logout, isLoggedIn, isAdmin, savePhoto, savePhotoToServer, loadProfileFromServer, getUserId } from "./authService";
 import { useNotifications } from "./useNotifications";
 import NotificationBell from "./NotificationBell";
 import NotificationsPage from "./NotificationsPage";
@@ -40,6 +40,7 @@ const ACTIVITY = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const user     = getUser();
   const token    = getToken();
 
@@ -48,7 +49,10 @@ export default function Dashboard() {
     const p = decodeJwt(token);
     return p?.exp ? p.exp - Math.floor(Date.now() / 1000) : 0;
   });
-  const [activeTab, setActiveTab] = useState("overview");
+
+  // Read ?tab= from URL on first render, default to "overview"
+  const initialTab = new URLSearchParams(location.search).get("tab") || "overview";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [photo, setPhoto]         = useState(user?.photoUrl || null);
   const [photoSaving, setPhotoSaving] = useState(false);
   const [photoMsg, setPhotoMsg]   = useState("");
@@ -113,6 +117,7 @@ export default function Dashboard() {
 
   const initial   = user.name ? user.name.charAt(0).toUpperCase() : "?";
   const firstName = user.name ? user.name.split(" ")[0] : "User";
+  const userId    = getUserId() || user.userId || "—";
   const loginTime = localStorage.getItem("loginTime");
   const loginDisplay = loginTime
     ? new Date(Number(loginTime)).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
@@ -124,7 +129,7 @@ export default function Dashboard() {
     return Math.max(0, Math.min(100, (secondsLeft / total) * 100));
   })();
   const expiryColor = secondsLeft < 600 ? "#ef4444" : secondsLeft < 3600 ? "#f59e0b" : "#6366f1";
-  const roleBadgeClass = user.role === "ADMIN" ? "db-badge-admin" : user.role === "MANAGER" ? "db-badge-manager" : user.role === "TECHNICIAN" ? "db-badge-technician" : "db-badge-user";
+  const roleBadgeClass = user.role === "ADMIN" ? "db-badge-admin" : user.role === "TECHNICIAN" ? "db-badge-technician" : "db-badge-user";
 
   return (
     <div className="db-root">
@@ -166,7 +171,7 @@ export default function Dashboard() {
         </nav>
 
         <div className="db-sidebar-footer">
-          <button className="db-nav-item" onClick={() => navigate("/")}>
+          <button className="db-nav-item" onClick={() => navigate("/home")}>
             <span className="db-nav-icon">🌐</span>
             <span>Home</span>
           </button>
@@ -250,6 +255,13 @@ export default function Dashboard() {
 
             {/* Stat cards */}
             <div className="db-stats-row">
+              <div className="db-stat-card">
+                <div className="db-stat-icon" style={{ background: "rgba(99,102,241,0.12)", color: "#6366f1" }}>🪪</div>
+                <div>
+                  <div className="db-stat-value" style={{ fontSize: "1rem", letterSpacing: "0.5px" }}>{userId}</div>
+                  <div className="db-stat-label">Your ID</div>
+                </div>
+              </div>
               <div className="db-stat-card">
                 <div className="db-stat-icon" style={{ background: "rgba(99,102,241,0.12)", color: "#6366f1" }}>🔑</div>
                 <div>
@@ -376,7 +388,7 @@ export default function Dashboard() {
               )}
               <div className="db-profile-badges">
                 <span className={`db-badge ${roleBadgeClass}`}>
-                  {user.role === "ADMIN" ? "👑" : user.role === "MANAGER" ? "🏢" : user.role === "TECHNICIAN" ? "🔧" : "👤"} {user.role}
+                  {user.role === "ADMIN" ? "👑" : user.role === "TECHNICIAN" ? "🔧" : "👤"} {user.role}
                 </span>
                 <span className={`db-badge ${user.provider === "GOOGLE" ? "db-badge-google" : "db-badge-local"}`}>
                   {user.provider === "GOOGLE" ? "🔵 Google" : "🔒 Local"}
@@ -398,6 +410,7 @@ export default function Dashboard() {
               <div className="db-card-header"><span className="db-card-title">Account Details</span></div>
               <div className="db-detail-list">
                 {[
+                  { label: "User ID",     value: userId },
                   { label: "Full Name",   value: user.name  || "—" },
                   { label: "Email",       value: user.email },
                   { label: "Role",        value: user.role  || "USER" },
