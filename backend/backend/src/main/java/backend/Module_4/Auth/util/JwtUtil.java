@@ -22,11 +22,17 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    /** Generate a JWT with email as subject and role as a claim */
-    public String generateToken(String email, Role role) {
+    /**
+     * Generate a JWT with:
+     *   sub    = email
+     *   role   = e.g. "ADMIN"
+     *   userId = e.g. "ADM-0001"
+     */
+    public String generateToken(String email, Role role, String userId) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("role", role.name())          // e.g. "ADMIN"
+                .claim("role",   role.name())
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -39,6 +45,10 @@ public class JwtUtil {
 
     public String extractRole(String token) {
         return (String) parseClaims(token).get("role");
+    }
+
+    public String extractUserId(String token) {
+        return (String) parseClaims(token).get("userId");
     }
 
     public boolean isTokenValid(String token) {
