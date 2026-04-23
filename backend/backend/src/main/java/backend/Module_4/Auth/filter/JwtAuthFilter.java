@@ -34,8 +34,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
 
             if (jwtUtil.isTokenValid(token)) {
-                String email = jwtUtil.extractEmail(token);
-                String role  = jwtUtil.extractRole(token);   // e.g. "ADMIN"
+                String email  = jwtUtil.extractEmail(token);
+                String role   = jwtUtil.extractRole(token);    // e.g. "ADMIN"
+                String userId = jwtUtil.extractUserId(token);  // e.g. "ADM-0001"
+
+                // Attach userId as a request attribute so controllers can read it
+                if (userId != null) {
+                    request.setAttribute("userId", userId);
+                }
 
                 // Spring Security expects "ROLE_ADMIN" format
                 List<SimpleGrantedAuthority> authorities =
