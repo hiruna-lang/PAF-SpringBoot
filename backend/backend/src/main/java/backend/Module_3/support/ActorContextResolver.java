@@ -40,7 +40,7 @@ public class ActorContextResolver {
             String effectiveRoleStr = StringUtils.hasText(roleVal) ? roleVal.trim().toUpperCase()
                                     : (roleFromJwt != null ? roleFromJwt.toUpperCase() : "USER");
 
-            // Map M4 roles (MANAGER) to M3 roles (ADMIN)
+            // Map M4 roles to M3 roles
             UserRole role = mapToM3Role(effectiveRoleStr);
 
             // Email: prefer JWT sub (most reliable), fall back to X-User-Id if it looks like an email
@@ -75,9 +75,9 @@ public class ActorContextResolver {
     private UserRole mapToM3Role(String roleStr) {
         if (roleStr == null) return UserRole.USER;
         return switch (roleStr) {
-            case "ADMIN", "MANAGER" -> UserRole.ADMIN;
-            case "TECHNICIAN"       -> UserRole.TECHNICIAN;
-            default                 -> UserRole.USER;
+            case "ADMIN"      -> UserRole.ADMIN;
+            case "TECHNICIAN" -> UserRole.TECHNICIAN;
+            default           -> UserRole.USER;
         };
     }
 
