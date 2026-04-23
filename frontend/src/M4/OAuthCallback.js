@@ -11,6 +11,8 @@ function OAuthCallback() {
     const params = new URLSearchParams(window.location.search);
     const token  = params.get("token");
     const role   = params.get("role") || "USER";
+    const isNew  = params.get("isNew") === "true";
+    const userId = params.get("userId") || "";
     const name   = params.get("name") || "";
     const photo  = params.get("photo") || "";
 
@@ -23,14 +25,24 @@ function OAuthCallback() {
       const payload = JSON.parse(atob(token.split(".")[1]));
       saveAuth({
         token,
+        userId:   userId || payload.userId || null,
         email:    payload.sub,
         name:     decodeURIComponent(name) || payload.sub,
         provider: "GOOGLE",
         role,
         photoUrl: decodeURIComponent(photo) || null,
       });
-      // Redirect based on role
-      navigate(role === "ADMIN" ? "/m4/admin" : "/m4/dashboard", { replace: true });
+
+      // New users (just registered) always land on dashboard first.
+      // Returning users are routed by role.
+      if (isNew) {
+        navigate("/m4/dashboard", { replace: true });
+      } else {
+        const normalizedRole = String(role || "").toUpperCase().replace(/^ROLE_/, "");
+        if (normalizedRole === "ADMIN") navigate("/m4/admin", { replace: true });
+        else if (normalizedRole === "TECHNICIAN") navigate("/m3", { replace: true });
+        else navigate("/m4/dashboard", { replace: true });
+      }
     } catch {
       setError("Failed to process Google login. Please try again.");
     }
