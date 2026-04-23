@@ -17,107 +17,127 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository         userRepository;
+    @Autowired private PasswordEncoder        passwordEncoder;
+    @Autowired private JwtUtil                jwtUtil;
+    @Autowired private M4NotificationService  notificationService;
+    @Autowired private UserIdService          userIdService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    // ── Register ───────────────────────────────────────────────────────────────
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private M4NotificationService notificationService;
-
-    /** Register a new local user — first user becomes ADMIN, rest are USER */
+    /**
+     * Register a new local user.
+     * The very first user in the DB becomes ADMIN; everyone else starts as USER.
+     * A role-prefixed sequential ID (USR-0001, ADM-0001, …) is assigned here.
+     */
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already in use");
         }
 
+        // Determine role first so we can generate the right ID prefix
+        long userCount = userRepository.count();
+        Role role = (userCount == 0) ? Role.ADMIN : Role.USER;
+
         User user = new User();
+        user.setId(userIdService.nextId(role));          // e.g. ADM-0001 or USR-0001
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setPhoneNumber(request.getPhoneNumber());
         user.setProvider("LOCAL");
-
-        // First registered user gets ADMIN role automatically
-        long userCount = userRepository.count();
-        user.setRole(userCount == 0 ? Role.ADMIN : Role.USER);
+        user.setRole(role);
 
         userRepository.save(user);
-
-        // Notify the new user
         notificationService.notifyRegister(user.getEmail(), user.getName());
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-        return new AuthResponse(token, user.getEmail(), user.getName(),
-                user.getProvider(), user.getRole().name(), user.getPhotoUrl());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId());
+        return toAuthResponse(user, token);
     }
 
-    /** Login with email + password */
+    // ── Login ──────────────────────────────────────────────────────────────────
+
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (user.getPassword() == null) {
-            throw new RuntimeException("This account uses Google login. Please sign in with Google.");
+            throw new RuntimeException(
+                "This account uses Google login. Please sign in with Google.");
         }
-
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
 
-        // Notify the user of the sign-in
+        // Back-fill ID for users created before this feature was added
+        if (user.getId() == null || !user.getId().contains("-")) {
+            user.setId(userIdService.nextId(user.getRole()));
+            userRepository.save(user);
+        }
+
         notificationService.notifyLogin(user.getEmail(), user.getName());
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-        return new AuthResponse(token, user.getEmail(), user.getName(),
-                user.getProvider(), user.getRole().name(), user.getPhotoUrl());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId());
+        return toAuthResponse(user, token);
     }
 
-    /** Get all users — ADMIN only */
+    // ── Admin: list all users ──────────────────────────────────────────────────
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    /** Change a user's role — ADMIN only (also notifies the affected user) */
+    // ── Admin: change role ─────────────────────────────────────────────────────
+
+    /**
+     * Changes a user's role.
+     * NOTE: the user's ID prefix is intentionally NOT changed — it reflects
+     * the role at the time of account creation.
+     */
     public User updateRole(String userId, Role newRole, String adminEmail) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(newRole);
         userRepository.save(user);
-
-        // Notify the user whose role changed
         notificationService.notifyRoleChange(user.getEmail(), newRole.name(), adminEmail);
-
         return user;
     }
 
-    /** Overload kept for backward compatibility (no admin email known) */
     public User updateRole(String userId, Role newRole) {
         return updateRole(userId, newRole, "an administrator");
     }
 
-    /** Save profile photo (base64 data URL) for the authenticated user */
+    // ── Profile photo ──────────────────────────────────────────────────────────
+
     public AuthResponse updatePhoto(String email, String photoUrl) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setPhotoUrl(photoUrl);
         userRepository.save(user);
-
-        // Notify the user
         notificationService.notifyPhotoUpdate(email);
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-        return new AuthResponse(token, user.getEmail(), user.getName(),
-                user.getProvider(), user.getRole().name(), user.getPhotoUrl());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId());
+        return toAuthResponse(user, token);
     }
 
-    /** Get current user profile by email */
+    // ── Get profile ────────────────────────────────────────────────────────────
+
     public User getProfile(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // ── Helper ─────────────────────────────────────────────────────────────────
+
+    private AuthResponse toAuthResponse(User user, String token) {
+        return new AuthResponse(
+                user.getId(),
+                token,
+                user.getEmail(),
+                user.getName(),
+                user.getProvider(),
+                user.getRole().name(),
+                user.getPhotoUrl()
+        );
     }
 }
