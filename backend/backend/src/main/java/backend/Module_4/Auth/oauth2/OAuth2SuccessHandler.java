@@ -3,6 +3,7 @@ package backend.Module_4.Auth.oauth2;
 import backend.Module_4.Auth.model.Role;
 import backend.Module_4.Auth.model.User;
 import backend.Module_4.Auth.repository.UserRepository;
+import backend.Module_4.Auth.service.UserIdService;
 import backend.Module_4.Auth.util.JwtUtil;
 import backend.Module_4.Notification.service.M4NotificationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,19 +16,17 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private M4NotificationService notificationService;
+    @Autowired private UserRepository        userRepository;
+    @Autowired private JwtUtil               jwtUtil;
+    @Autowired private M4NotificationService notificationService;
+    @Autowired private UserIdService         userIdService;
 
     @Value("${oauth2.redirect-uri:http://localhost:3000/oauth2/callback}")
     private String redirectUri;
@@ -44,45 +43,56 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String googleId = oAuth2User.getAttribute("sub");
         String picture  = oAuth2User.getAttribute("picture");
 
-        Optional<User> existingUser = userRepository.findByEmail(email);
+        Optional<User> existing = userRepository.findByEmail(email);
 
         User user;
         boolean isNewUser = false;
-        if (existingUser.isPresent()) {
-            user = existingUser.get();
+
+        if (existing.isPresent()) {
+            user = existing.get();
             if (user.getGoogleId() == null) {
                 user.setGoogleId(googleId);
                 user.setProvider("GOOGLE");
             }
             if (picture != null) user.setPhotoUrl(picture);
+
+            // Back-fill ID for users created before this feature
+            if (user.getId() == null || !user.getId().contains("-")) {
+                user.setId(userIdService.nextId(user.getRole()));
+            }
+
             userRepository.save(user);
         } else {
+            // New Google user — first ever user becomes ADMIN
+            Role role = (userRepository.count() == 0) ? Role.ADMIN : Role.USER;
+
             user = new User();
+            user.setId(userIdService.nextId(role));
             user.setEmail(email);
             user.setName(name);
             user.setGoogleId(googleId);
             user.setProvider("GOOGLE");
             user.setPhotoUrl(picture);
-            long count = userRepository.count();
-            user.setRole(count == 0 ? Role.ADMIN : Role.USER);
+            user.setRole(role);
             userRepository.save(user);
             isNewUser = true;
         }
 
-        // Fire notification for the auth event
         if (isNewUser) {
             notificationService.notifyRegister(user.getEmail(), user.getName());
         } else {
             notificationService.notifyLogin(user.getEmail(), user.getName());
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId());
 
         String redirectUrl = redirectUri
-                + "?token=" + token
-                + "&role=" + user.getRole().name()
-                + "&name=" + java.net.URLEncoder.encode(user.getName() != null ? user.getName() : "", "UTF-8")
-                + "&photo=" + java.net.URLEncoder.encode(user.getPhotoUrl() != null ? user.getPhotoUrl() : "", "UTF-8");
+                + "?token="   + token
+                + "&role="    + user.getRole().name()
+                + "&isNew="   + isNewUser
+                + "&userId="  + URLEncoder.encode(user.getId(), StandardCharsets.UTF_8)
+                + "&name="    + URLEncoder.encode(user.getName()     != null ? user.getName()     : "", StandardCharsets.UTF_8)
+                + "&photo="   + URLEncoder.encode(user.getPhotoUrl() != null ? user.getPhotoUrl() : "", StandardCharsets.UTF_8);
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
