@@ -11,6 +11,8 @@ import M2             from './M2/m2';
 import M3Module       from './M3/m3';
 import StandaloneCreateTicketPage from './M3/pages/StandaloneCreateTicketPage';
 import M4, { OAuthCallback } from './M4/m4';
+import ContactPage    from './pages/ContactPage';
+import FeedbackPage   from './pages/FeedbackPage';
 
 function App() {
   return (
@@ -44,6 +46,12 @@ function App() {
 
       {/* Standalone ticket creation */}
       <Route path="/create-ticket" element={<StandaloneCreateTicketPage />} />
+
+      {/* Contact page */}
+      <Route path="/contact" element={<ContactPage />} />
+
+      {/* Feedback page */}
+      <Route path="/feedback" element={<FeedbackPage />} />
 
       {/* Google OAuth2 callback */}
       <Route path="/oauth2/callback" element={<OAuthCallback />} />
