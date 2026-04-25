@@ -1,20 +1,8 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { isLoggedIn, getRole } from "../M4/authService";
 import "./LandingPage.css";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-
-  // If already logged in, redirect to the right place
-  useEffect(() => {
-    if (isLoggedIn()) {
-      const role = getRole();
-      if (role === "ADMIN") navigate("/m4/admin", { replace: true });
-      else if (role === "TECHNICIAN") navigate("/m3", { replace: true });
-      else navigate("/m4/dashboard", { replace: true });
-    }
-  }, [navigate]);
 
   return (
     <div className="lp-root">
