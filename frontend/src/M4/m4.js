@@ -6,6 +6,7 @@ import Register       from "./Register";
 import OAuthCallback  from "./OAuthCallback";
 import Dashboard      from "./Dashboard";
 import AdminDashboard from "./AdminDashboard";
+import ProfilePage    from "./ProfilePage";
 import ProtectedRoute from "./ProtectedRoute";
 
 function M4() {
@@ -15,7 +16,14 @@ function M4() {
       <Route path="login"    element={<Login />} />
       <Route path="register" element={<Register />} />
 
-      {/* Any logged-in user */}
+      {/* Standalone user profile page — no sidebar */}
+      <Route path="profile" element={
+        <ProtectedRoute>
+          <ProfilePage />
+        </ProtectedRoute>
+      } />
+
+      {/* Dashboard — admin gets sidebar, user/technician gets top-nav */}
       <Route path="dashboard" element={
         <ProtectedRoute>
           <Dashboard />
