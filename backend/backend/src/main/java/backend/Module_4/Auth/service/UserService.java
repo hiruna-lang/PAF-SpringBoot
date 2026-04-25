@@ -107,6 +107,26 @@ public class UserService {
         return updateRole(userId, newRole, "an administrator");
     }
 
+    // ── Update profile (name, phone) ──────────────────────────────────────────
+
+    public AuthResponse updateProfile(String email, String name, String phoneNumber) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (name != null && !name.isBlank()) user.setName(name.trim());
+        if (phoneNumber != null)             user.setPhoneNumber(phoneNumber.trim());
+        userRepository.save(user);
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId());
+        return toAuthResponse(user, token);
+    }
+
+    // ── Delete account ─────────────────────────────────────────────────────────
+
+    public void deleteAccount(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
+
     // ── Profile photo ──────────────────────────────────────────────────────────
 
     public AuthResponse updatePhoto(String email, String photoUrl) {
