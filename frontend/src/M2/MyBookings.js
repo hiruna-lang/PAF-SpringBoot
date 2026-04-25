@@ -120,7 +120,7 @@ function MyBookings({ onToast }) {
           <button
             className="nav-icon-btn nav-profile-btn"
             type="button"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/m4/dashboard?tab=profile")}
             aria-label="Profile"
             title="Profile"
           >
