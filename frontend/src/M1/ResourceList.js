@@ -272,14 +272,62 @@ function ResourceListPage() {
 
       {/* ── Navbar ── */}
       <nav className="rl-nav">
-        <button className="rl-nav-back" onClick={() => navigate("/")}>← Home</button>
-        <div className="rl-nav-brand">
+        <a
+          className="rl-nav-brand"
+          href="#top"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/");
+          }}
+        >
           <span className="rl-nav-brand-icon">SC</span>
-          <span className="rl-nav-brand-name">Campus Resources</span>
+          <span className="rl-nav-brand-name">SmartCampus</span>
+        </a>
+
+        <div className="rl-nav-center">
+          <button
+            className="rl-nav-menu-btn rl-nav-menu-active"
+            type="button"
+            onClick={() => navigate("/resources")}
+          >
+            Resources
+          </button>
+          <button
+            className="rl-nav-menu-btn"
+            type="button"
+            onClick={() => navigate("/m2?tab=my-bookings")}
+          >
+            My Booking
+          </button>
+          <button
+            className="rl-nav-menu-btn rl-nav-menu-highlight"
+            type="button"
+            onClick={() => navigate("/create-ticket")}
+          >
+            Create Ticket
+          </button>
         </div>
-        <div className="rl-nav-actions">
-          <button className="rl-btn rl-btn-secondary" onClick={() => navigate("/m2?tab=my-bookings")}> 
-            📅 My Bookings
+
+        <div className="rl-nav-icons">
+          <button
+            className="rl-nav-icon-btn"
+            type="button"
+            onClick={() => navigate("/notifications")}
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <span className="rl-nav-icon">🔔</span>
+            <span className="rl-nav-notification-dot"></span>
+          </button>
+
+          <button
+            className="rl-nav-icon-btn rl-nav-profile-btn"
+            type="button"
+            onClick={() => navigate("/profile")}
+            aria-label="Profile"
+            title="Profile"
+          >
+            <span className="rl-nav-icon">👤</span>
           </button>
         </div>
       </nav>

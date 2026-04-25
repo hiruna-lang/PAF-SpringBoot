@@ -60,16 +60,62 @@ function CreateTicketContent() {
     <div className="sct-page">
       {/* ── Navbar ── */}
       <nav className="sct-nav">
-        <button className="sct-nav-back" onClick={() => navigate("/")}>
-          ← Home
-        </button>
-        <div className="sct-nav-brand">
+        <a
+          className="sct-nav-brand"
+          href="#top"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/");
+          }}
+        >
           <span className="sct-nav-brand-icon">SC</span>
-          <span className="sct-nav-brand-name">Support Desk</span>
+          <span className="sct-nav-brand-name">SmartCampus</span>
+        </a>
+
+        <div className="sct-nav-center">
+          <button
+            className="sct-nav-menu-btn"
+            type="button"
+            onClick={() => navigate("/resources")}
+          >
+            Resources
+          </button>
+          <button
+            className="sct-nav-menu-btn"
+            type="button"
+            onClick={() => navigate("/m2?tab=my-bookings")}
+          >
+            My Booking
+          </button>
+          <button
+            className="sct-nav-menu-btn sct-nav-menu-highlight"
+            type="button"
+            onClick={() => navigate("/create-ticket")}
+          >
+            Create Ticket
+          </button>
         </div>
-        <div className="sct-nav-actions">
-          <button className="sct-nav-btn-secondary" onClick={() => navigate("/m3/user/tickets")}>
-            View My Tickets
+
+        <div className="sct-nav-icons">
+          <button
+            className="sct-nav-icon-btn"
+            type="button"
+            onClick={() => navigate("/notifications")}
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <span className="sct-nav-icon">🔔</span>
+            <span className="sct-nav-notification-dot"></span>
+          </button>
+
+          <button
+            className="sct-nav-icon-btn sct-nav-profile-btn"
+            type="button"
+            onClick={() => navigate("/profile")}
+            aria-label="Profile"
+            title="Profile"
+          >
+            <span className="sct-nav-icon">👤</span>
           </button>
         </div>
       </nav>

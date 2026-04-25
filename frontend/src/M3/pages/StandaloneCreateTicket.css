@@ -53,8 +53,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 1;
-  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
 .sct-nav-brand-icon {
@@ -74,33 +74,93 @@
 
 .sct-nav-brand-name {
   font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-weight: 800;
+  color: #0f766e;
 }
 
-.sct-nav-actions {
+.sct-nav-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sct-nav-menu-btn {
+  padding: 9px 16px;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sct-nav-menu-btn:hover {
+  color: #0f766e;
+  background: #f0fdfa;
+  border-color: #99f6e4;
+}
+
+.sct-nav-menu-highlight {
+  background: #0f766e;
+  color: #ffffff;
+  border-color: #0f766e;
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.22);
+}
+
+.sct-nav-menu-highlight:hover {
+  background: #115e59;
+  color: #ffffff;
+  border-color: #115e59;
+}
+
+.sct-nav-icons {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.sct-nav-btn-secondary {
-  background: #fff;
+.sct-nav-icon-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 7px 16px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #334155;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-  white-space: nowrap;
-  font-family: inherit;
+  transition: all 0.2s ease;
 }
 
-.sct-nav-btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+.sct-nav-icon-btn:hover {
+  background: #f0fdfa;
+  border-color: #99f6e4;
+  transform: translateY(-1px);
+}
+
+.sct-nav-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.sct-nav-profile-btn {
+  background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+}
+
+.sct-nav-notification-dot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 9px;
+  height: 9px;
+  background: #ef4444;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
 }
 
 /* ── Container ── */
@@ -207,6 +267,19 @@
 @media (max-width: 640px) {
   .sct-nav {
     padding: 0 16px;
+  }
+
+  .sct-nav-center {
+    gap: 6px;
+  }
+
+  .sct-nav-menu-btn {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .sct-nav-icons {
+    display: none;
   }
 
   .sct-nav-brand-name {
