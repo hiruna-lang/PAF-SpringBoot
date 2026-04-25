@@ -42,10 +42,12 @@ function Register() {
         password: form.password, phoneNumber: form.phoneNumber,
       });
       saveAuth(response);
-      // After sign-up, everyone lands on their dashboard first
-      navigate("/m4/dashboard");
+      // After sign-up, go to home page
+      navigate("/home");
     } catch (err) {
-      setApiError(err.message);
+      setApiError(err.message === "Failed to fetch"
+        ? "Cannot connect to server. Make sure the backend is running."
+        : err.message);
     } finally {
       setLoading(false);
     }
