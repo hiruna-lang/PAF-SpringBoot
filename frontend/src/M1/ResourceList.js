@@ -323,7 +323,7 @@ function ResourceListPage() {
           <button
             className="rl-nav-icon-btn rl-nav-profile-btn"
             type="button"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/m4/dashboard?tab=profile")}
             aria-label="Profile"
             title="Profile"
           >
