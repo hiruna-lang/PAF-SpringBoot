@@ -96,8 +96,38 @@ body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: #f0f
 
 /* ── My Bookings centered page layout ──────────────────────────────────── */
 .my-bookings-page {
+  --m2-bookings-bg-image: url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=2400&q=80');
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
   padding-top: 92px;
   width: 100%;
+}
+
+.my-bookings-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(90deg, rgba(241, 245, 255, 0.95) 0%, rgba(241, 245, 255, 0.9) 32%, rgba(241, 245, 255, 0.55) 56%, rgba(241, 245, 255, 0.18) 82%),
+    var(--m2-bookings-bg-image);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transform: scale(1.02);
+}
+
+.my-bookings-page::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 14%, rgba(59, 130, 246, 0.1), transparent 34%),
+    radial-gradient(circle at 88% 10%, rgba(34, 197, 94, 0.1), transparent 30%),
+    linear-gradient(180deg, rgba(248, 250, 255, 0.26), rgba(241, 245, 255, 0.66));
 }
 
 .my-bookings-container {
@@ -105,6 +135,12 @@ body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: #f0f
   max-width: 1280px;
   margin: 0 auto;
   padding: 24px 32px 40px;
+  border-radius: 28px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.09);
 }
 
 .booking-filter-row {
@@ -119,6 +155,11 @@ body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: #f0f
 .my-bookings-container .workflow-bar,
 .my-bookings-container .table-card {
   width: 100%;
+}
+
+.my-bookings-container .page-header {
+  padding-bottom: .75rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.24);
 }
 
 /* ── Page header ────────────────────────────────────────────────────────── */
@@ -624,5 +665,15 @@ tbody tr:hover td { background: #fafbff; }
 
   .my-bookings-container {
     padding: 20px 16px 32px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 760px) {
+  .my-bookings-page::before {
+    background-image:
+      linear-gradient(180deg, rgba(241, 245, 255, 0.88) 0%, rgba(241, 245, 255, 0.72) 34%, rgba(241, 245, 255, 0.48) 58%, rgba(241, 245, 255, 0.2) 100%),
+      var(--m2-bookings-bg-image);
+    background-position: 62% center;
   }
 }
