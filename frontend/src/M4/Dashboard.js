@@ -132,9 +132,10 @@ export default function Dashboard() {
   const roleBadgeClass = user.role === "ADMIN" ? "db-badge-admin" : user.role === "TECHNICIAN" ? "db-badge-technician" : "db-badge-user";
 
   return (
-    <div className="db-root">
+    <div className={`db-root${isAdmin() ? "" : " db-root-nosidebar"}`}>
 
-      {/* ── Sidebar ──────────────────────────────────────── */}
+      {/* ── Sidebar — ADMIN only ──────────────────────── */}
+      {isAdmin() && (
       <aside className="db-sidebar">
         <div className="db-sidebar-brand">
           <div className="db-brand-icon">🎓</div>
@@ -162,12 +163,10 @@ export default function Dashboard() {
             </button>
           ))}
 
-          {isAdmin() && (
-            <button className="db-nav-item db-nav-admin" onClick={() => navigate("/m4/admin")}>
-              <span className="db-nav-icon">👑</span>
-              <span>Admin Panel</span>
-            </button>
-          )}
+          <button className="db-nav-item db-nav-admin" onClick={() => navigate("/m4/admin")}>
+            <span className="db-nav-icon">👑</span>
+            <span>Admin Panel</span>
+          </button>
         </nav>
 
         <div className="db-sidebar-footer">
@@ -180,7 +179,6 @@ export default function Dashboard() {
             <span>Sign Out</span>
           </button>
         </div>
-        {/* User card at bottom */}
         <div className="db-sidebar-user" onClick={() => setActiveTab("profile")}>
           <div className="db-sidebar-user-avatar">
             {photo ? <img src={photo} alt="avatar" /> : initial}
@@ -191,11 +189,64 @@ export default function Dashboard() {
           </div>
         </div>
       </aside>
+      )}
+
+      {/* ── Top nav — USER / TECHNICIAN only ─────────── */}
+      {!isAdmin() && (
+        <header className="db-topnav">
+          <div className="db-topnav-brand">
+            <div className="db-brand-icon">🎓</div>
+            <span className="db-brand-name">SmartCampus</span>
+          </div>
+          <nav className="db-topnav-tabs">
+            {[
+              { id: "overview",      label: "Overview" },
+              { id: "modules",       label: "Modules" },
+              { id: "security",      label: "Security" },
+              { id: "notifications", label: "Notifications", badge: unreadCount > 0 ? unreadCount : null },
+            ].map(item => (
+              <button
+                key={item.id}
+                className={`db-topnav-tab ${activeTab === item.id ? "active" : ""}`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                {item.label}
+                {item.badge != null && <span className="db-topnav-badge">{item.badge > 99 ? "99+" : item.badge}</span>}
+              </button>
+            ))}
+          </nav>
+          <div className="db-topnav-right">
+            <div className="db-clock" style={{ fontSize: "0.82rem", color: "#64748b" }}>
+              {now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+            </div>
+            <NotificationBell
+              notifications={notifications}
+              unreadCount={unreadCount}
+              loading={notifLoading}
+              markRead={markRead}
+              markAllRead={markAllRead}
+              onViewAll={() => setActiveTab("notifications")}
+            />
+            <button
+              className="db-topnav-avatar"
+              onClick={() => navigate("/m4/profile")}
+              title="My Profile"
+              aria-label="My Profile"
+            >
+              {photo ? <img src={photo} alt="avatar" /> : <span>{initial}</span>}
+            </button>
+            <button className="db-topnav-signout" onClick={() => { logout(); navigate("/m4/login"); }}>
+              Sign Out
+            </button>
+          </div>
+        </header>
+      )}
 
       {/* ── Main ─────────────────────────────────────────── */}
-      <main className="db-main">
+      <main className={`db-main${isAdmin() ? "" : " db-main-nosidebar"}`}>
 
-        {/* Top bar */}
+        {/* Top bar — admin only */}
+        {isAdmin() && (
         <header className="db-topbar">
           <div>
             <h1 className="db-topbar-title">
@@ -226,6 +277,7 @@ export default function Dashboard() {
             </div>
           </div>
         </header>
+        )}
 
         {/* ── OVERVIEW TAB ─────────────────────────────── */}
         {activeTab === "overview" && (
@@ -241,7 +293,7 @@ export default function Dashboard() {
                 <h2>Good {getGreeting()}, {firstName}!</h2>
                 <p>{user.email}</p>
                 <div className="db-banner-actions">
-                  <button className="db-banner-btn" onClick={() => setActiveTab("profile")}>👤 My Profile</button>
+                  <button className="db-banner-btn" onClick={() => isAdmin() ? setActiveTab("profile") : navigate("/m4/profile")}>👤 My Profile</button>
                   <button className="db-banner-btn" onClick={() => setActiveTab("modules")}>📦 Modules</button>
                   <button className="db-banner-btn" onClick={() => setActiveTab("security")}>🔐 Security</button>
                 </div>
