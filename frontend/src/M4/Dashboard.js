@@ -26,7 +26,7 @@ function getGreeting() {
 
 const QUICK_LINKS = [
   { icon: "📚", label: "Courses",   desc: "Browse & manage courses",     path: "/m1", color: "#6366f1" },
-  { icon: "👥", label: "Students",  desc: "Student portal & enrollment", path: "/m2", color: "#8b5cf6" },
+  { icon: "👥", label: "Students",  desc: "Student portal & enrollment", path: "/m2/admin", color: "#8b5cf6" },
   { icon: "📊", label: "Reports",   desc: "Analytics & performance",     path: "/m3", color: "#ec4899" },
   { icon: "🔐", label: "Security",  desc: "Auth settings & roles",       path: "/m4", color: "#10b981" },
 ];
