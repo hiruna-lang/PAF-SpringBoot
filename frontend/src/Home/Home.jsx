@@ -405,65 +405,6 @@ function Home() {
         </div>
       </section>
 
-      <section className="modules" id="modules">
-        <div className="modules-inner">
-          <span className="section-label">Modules</span>
-          <h2 className="section-title">Choose a module to jump in</h2>
-          <p className="section-sub">
-            Each module is designed to work on its own while sharing data across
-            the campus ecosystem.
-          </p>
-
-          <div className="modules-grid">
-            {[
-              {
-                label: "Module 01",
-                icon: "📦",
-                title: "Resources",
-                copy: "Track labs, equipment, and shared assets in real time.",
-                path: "/m1",
-              },
-              {
-                label: "Module 02",
-                icon: "🎓",
-                title: "Student Hub",
-                copy: "Give students a personal dashboard for campus life.",
-                path: "/m2",
-              },
-              {
-                label: "Module 03",
-                icon: "🎫",
-                title: "Support Desk",
-                copy: "Log, assign, and resolve issues with full visibility.",
-                path: "/m3",
-              },
-              {
-                label: "Module 04",
-                icon: "🔐",
-                title: "Access & Auth",
-                copy: "Manage authentication, roles, and secure access flows.",
-                path: "/m4",
-              },
-            ].map((module) => (
-              <button
-                className="module-card reveal"
-                type="button"
-                key={module.title}
-                onClick={() => navigate(module.path)}
-              >
-                <div className="module-card-content">
-                  <div className="module-number">{module.label}</div>
-                  <div className="module-icon">{module.icon}</div>
-                  <h3>{module.title}</h3>
-                  <p>{module.copy}</p>
-                  <span className="module-btn">Open module →</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="cta-section" id="cta">
         <div className="cta-card reveal">
           <h2>Make the campus feel effortless</h2>
@@ -491,24 +432,78 @@ function Home() {
       </section>
 
       <footer className="footer">
-        <div className="footer-brand">
-          <span className="nav-brand-icon">SC</span>
-          <span className="nav-brand-name">SmartCampus</span>
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-brand">
+              <span className="nav-brand-icon">SC</span>
+              <span className="nav-brand-name">SmartCampus</span>
+            </div>
+            <p className="footer-description">
+              Unified campus operations, finally human. SmartCampus brings together resources, 
+              student services, and support in one seamless platform.
+            </p>
+            <div className="footer-social">
+              <a href="#" className="footer-social-link" aria-label="Twitter">
+                <span className="footer-social-icon">𝕏</span>
+              </a>
+              <a href="#" className="footer-social-link" aria-label="LinkedIn">
+                <span className="footer-social-icon">in</span>
+              </a>
+              <a href="#" className="footer-social-link" aria-label="GitHub">
+                <span className="footer-social-icon">⚡</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="footer-section">
+            <h3 className="footer-heading">Platform</h3>
+            <ul className="footer-links">
+              <li><a href="#features">Features</a></li>
+              <li><a href="/resources">Resources</a></li>
+              <li><a href="/create-ticket">Support</a></li>
+              <li><a href="/m2?tab=my-bookings">Bookings</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h3 className="footer-heading">Support</h3>
+            <ul className="footer-links">
+              <li><a href="/contact">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h3 className="footer-heading">Feedback</h3>
+            <ul className="footer-links">
+              <li><a href="/feedback">Send Feedback</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h3 className="footer-heading">Legal</h3>
+            <ul className="footer-links">
+              <li><a href="/privacy">Privacy Policy</a></li>
+              <li><a href="/terms">Terms of Service</a></li>
+              <li><a href="/security">Security</a></li>
+              <li><a href="/compliance">Compliance</a></li>
+            </ul>
+          </div>
         </div>
-        <div className="footer-copy">
-          Built for modern universities and empowered teams.
+
+        <div className="footer-bottom">
+          <div className="footer-bottom-content">
+            <div className="footer-copy">
+              2024 SmartCampus. Built for modern universities and empowered teams.
+            </div>
+            <div className="footer-bottom-links">
+              <a href="/privacy">Privacy</a>
+              <span className="footer-separator">•</span>
+              <a href="/terms">Terms</a>
+              <span className="footer-separator">•</span>
+              <a href="/cookies">Cookies</a>
+            </div>
+          </div>
         </div>
-        <ul className="footer-links">
-          <li>
-            <a href="#features">Features</a>
-          </li>
-          <li>
-            <a href="#modules">Modules</a>
-          </li>
-          <li>
-            <a href="#cta">Get started</a>
-          </li>
-        </ul>
       </footer>
     </div>
   );
