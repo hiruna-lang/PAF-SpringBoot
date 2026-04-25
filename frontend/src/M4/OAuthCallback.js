@@ -33,16 +33,8 @@ function OAuthCallback() {
         photoUrl: decodeURIComponent(photo) || null,
       });
 
-      // New users (just registered) always land on dashboard first.
-      // Returning users are routed by role.
-      if (isNew) {
-        navigate("/m4/dashboard", { replace: true });
-      } else {
-        const normalizedRole = String(role || "").toUpperCase().replace(/^ROLE_/, "");
-        if (normalizedRole === "ADMIN") navigate("/m4/admin", { replace: true });
-        else if (normalizedRole === "TECHNICIAN") navigate("/m3", { replace: true });
-        else navigate("/m4/dashboard", { replace: true });
-      }
+      // Always go to home page after any sign-in/sign-up
+      navigate("/home", { replace: true });
     } catch {
       setError("Failed to process Google login. Please try again.");
     }
