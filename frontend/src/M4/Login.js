@@ -34,10 +34,11 @@ function Login() {
     try {
       const response = await loginUser(form);
       saveAuth(response);
-      // Local login always goes to dashboard — navigate from there if needed
-      navigate("/m4/dashboard");
+      navigate("/home");
     } catch (err) {
-      setApiError(err.message);
+      setApiError(err.message === "Failed to fetch"
+        ? "Cannot connect to server. Make sure the backend is running."
+        : err.message);
     } finally {
       setLoading(false);
     }
