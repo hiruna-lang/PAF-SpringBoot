@@ -11,35 +11,28 @@ import { isLoggedIn, getRole } from "./authService";
  *               omit to allow any authenticated user
  *
  * Rules:
- *   1. Not logged in          → /m4/login
- *   2. Logged in, wrong role  → redirect to the user's own home
- *      - ADMIN      → /m4/admin
- *      - TECHNICIAN → /m3
- *      - USER       → /m4/dashboard
- *   3. USER or TECHNICIAN trying to reach any /m4/admin path → /m4/dashboard
+ *   1. Not logged in                    → /m4/login
+ *   2. Non-admin trying /m4/admin path  → /m4/dashboard
+ *   3. Role-restricted route mismatch   → /m4/dashboard (or /m4/admin for admins)
  */
 function ProtectedRoute({ children, roles }) {
   const location = useLocation();
 
   if (!isLoggedIn()) {
-    // Preserve the intended destination so we can redirect back after login
     return <Navigate to="/m4/login" state={{ from: location }} replace />;
   }
 
   const role = getRole();
 
-  // Hard block: non-admins must never reach anything under /m4/admin
-  const isAdminPath = location.pathname.startsWith("/m4/admin");
-  if (isAdminPath && role !== "ADMIN") {
-    if (role === "TECHNICIAN") return <Navigate to="/m3" replace />;
+  // Hard block: only ADMIN can access /m4/admin
+  if (location.pathname.startsWith("/m4/admin") && role !== "ADMIN") {
     return <Navigate to="/m4/dashboard" replace />;
   }
 
   // Role-restricted route check
   if (roles && !roles.includes(role)) {
-    if (role === "ADMIN")      return <Navigate to="/m4/admin"     replace />;
-    if (role === "TECHNICIAN") return <Navigate to="/m3"           replace />;
-    return                            <Navigate to="/m4/dashboard" replace />;
+    if (role === "ADMIN") return <Navigate to="/m4/admin" replace />;
+    return <Navigate to="/m4/dashboard" replace />;
   }
 
   return children;
