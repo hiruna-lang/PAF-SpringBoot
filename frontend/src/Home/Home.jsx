@@ -246,7 +246,11 @@ function Home() {
           <button
             className="nav-icon-btn nav-profile-btn"
             type="button"
-            onClick={() => navigate(isLoggedIn() ? "/m4/dashboard?tab=profile" : "/m4/login")}
+            onClick={() => {
+              if (!isLoggedIn()) { navigate("/m4/login"); return; }
+              const role = (user?.role || "").toUpperCase().replace(/^ROLE_/, "");
+              navigate(role === "ADMIN" ? "/m4/dashboard?tab=profile" : "/m4/profile");
+            }}
             aria-label="Profile"
             title={isLoggedIn() ? (user?.name || "Profile") : "Sign in"}
           >
