@@ -88,7 +88,7 @@ function CreateTicketContent() {
             My Booking
           </button>
           <button
-            className="sct-nav-menu-btn sct-nav-menu-highlight"
+            className="sct-nav-menu-btn"
             type="button"
             onClick={() => navigate("/create-ticket")}
           >

@@ -97,7 +97,7 @@ function MyBookings({ onToast }) {
           </button>
 
           <button
-            className="nav-menu-btn nav-menu-highlight"
+            className="nav-menu-btn"
             type="button"
             onClick={() => navigate("/create-ticket")}
           >

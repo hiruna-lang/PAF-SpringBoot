@@ -300,7 +300,7 @@ function ResourceListPage() {
             My Booking
           </button>
           <button
-            className="rl-nav-menu-btn rl-nav-menu-highlight"
+            className="rl-nav-menu-btn"
             type="button"
             onClick={() => navigate("/create-ticket")}
           >
