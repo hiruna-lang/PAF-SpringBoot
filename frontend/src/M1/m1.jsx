@@ -4,6 +4,7 @@ import ViewResources from "./pages/ViewResources";
 import CreateResource from "./pages/CreateResource";
 import UpdateResource from "./pages/UpdateResource";
 import ResourceDetails from "./pages/ResourceDetails";
+import GenerateReport from "./pages/GenerateReport";
 import "./m1.css";
 
 const navItems = [
@@ -11,6 +12,7 @@ const navItems = [
   { key: "view", label: "View Resources" },
   { key: "create", label: "Create Resource" },
   { key: "update", label: "Update Resource" },
+  { key: "report", label: "Generate Report" },
 ];
 
 function M1() {
@@ -42,6 +44,8 @@ function M1() {
             setCurrentPage={setCurrentPage}
           />
         );
+      case "report":
+        return <GenerateReport setCurrentPage={setCurrentPage} />;
       case "dashboard":
       default:
         return <ResourceDashboard setCurrentPage={setCurrentPage} />;
