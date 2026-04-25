@@ -69,15 +69,9 @@ function M1() {
                 className={`m1-nav-btn${currentPage === item.key ? " active" : ""}`}
               >
                 <span>{item.label}</span>
-                {currentPage === item.key && (
-                  <span className="m1-nav-badge">Active</span>
-                )}
               </button>
             ))}
           </nav>
-          <div className="m1-sidebar-info">
-            Frontend running on port 3000 with local API connectivity.
-          </div>
         </aside>
 
         <main className="m1-main">

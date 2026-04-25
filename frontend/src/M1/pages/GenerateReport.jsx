@@ -2,434 +2,307 @@ import React, { useEffect, useState } from "react";
 import { getAllResources } from "../services/resourceApi";
 import "../styles/GenerateReport.css";
 
-const typeOptions = ["LECTURE_HALL", "LAB", "MEETING_ROOM", "EQUIPMENT"];
-const statusOptions = ["ACTIVE", "OUT_OF_SERVICE", "MAINTENANCE"];
+const TYPE_OPTIONS   = ["LECTURE_HALL", "LAB", "MEETING_ROOM", "EQUIPMENT"];
+const STATUS_OPTIONS = ["ACTIVE", "OUT_OF_SERVICE", "MAINTENANCE"];
+const fmt = (s) => s?.replace(/_/g, " ") ?? s;
 
-function GenerateReport({ setCurrentPage }) {
-  const [resources, setResources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  
-  // Filter states
-  const [selectedType, setSelectedType] = useState("ALL");
-  const [selectedStatus, setSelectedStatus] = useState("ALL");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-  
-  // Report data
+export default function GenerateReport({ setCurrentPage }) {
+  const [resources,         setResources]         = useState([]);
+  const [loading,           setLoading]           = useState(false);
+  const [error,             setError]             = useState("");
+  const [selectedType,      setSelectedType]      = useState("ALL");
+  const [selectedStatus,    setSelectedStatus]    = useState("ALL");
+  const [dateFrom,          setDateFrom]          = useState("");
+  const [dateTo,            setDateTo]            = useState("");
   const [filteredResources, setFilteredResources] = useState([]);
-  const [reportGenerated, setReportGenerated] = useState(false);
+  const [reportGenerated,   setReportGenerated]   = useState(false);
 
   useEffect(() => {
-    const loadResources = async () => {
+    (async () => {
       setLoading(true);
-      setError("");
       try {
         const data = await getAllResources();
         setResources(Array.isArray(data) ? data : []);
-      } catch (err) {
-        setError(err.message || "Failed to load resources.");
+      } catch (e) {
+        setError(e.message || "Failed to load resources.");
       } finally {
         setLoading(false);
       }
-    };
-
-    loadResources();
+    })();
   }, []);
 
   const generateReport = () => {
     let filtered = [...resources];
-
-    // Filter by type
-    if (selectedType !== "ALL") {
-      filtered = filtered.filter((r) => r.type === selectedType);
-    }
-
-    // Filter by status
-    if (selectedStatus !== "ALL") {
-      filtered = filtered.filter((r) => r.status === selectedStatus);
-    }
-
-    // Filter by date range (if applicable)
+    if (selectedType   !== "ALL") filtered = filtered.filter(r => r.type   === selectedType);
+    if (selectedStatus !== "ALL") filtered = filtered.filter(r => r.status === selectedStatus);
     if (dateFrom || dateTo) {
-      filtered = filtered.filter((r) => {
-        const resourceDate = new Date(r.createdAt);
-        if (dateFrom && resourceDate < new Date(dateFrom)) return false;
-        if (dateTo) {
-          const endDate = new Date(dateTo);
-          endDate.setHours(23, 59, 59);
-          if (resourceDate > endDate) return false;
-        }
+      filtered = filtered.filter(r => {
+        const d = new Date(r.createdAt);
+        if (dateFrom && d < new Date(dateFrom)) return false;
+        if (dateTo) { const e = new Date(dateTo); e.setHours(23,59,59); if (d > e) return false; }
         return true;
       });
     }
-
     setFilteredResources(filtered);
     setReportGenerated(true);
   };
 
-  const getReportStats = () => {
-    const total = filteredResources.length;
-    const active = filteredResources.filter((r) => r.status === "ACTIVE").length;
-    const outOfService = filteredResources.filter((r) => r.status === "OUT_OF_SERVICE").length;
-    const maintenance = filteredResources.filter((r) => r.status === "MAINTENANCE").length;
-    
-    const byType = typeOptions.map((type) => ({
-      type,
-      count: filteredResources.filter((r) => r.type === type).length,
-    }));
-
-    return { total, active, outOfService, maintenance, byType };
+  const reset = () => {
+    setSelectedType("ALL"); setSelectedStatus("ALL");
+    setDateFrom(""); setDateTo("");
+    setReportGenerated(false); setFilteredResources([]);
   };
 
-  const exportAsCSV = () => {
-    const stats = getReportStats();
-    let csvContent = "Campus Resource Management Report\n";
-    csvContent += `Generated: ${new Date().toLocaleString()}\n`;
-    csvContent += `\n--- SUMMARY ---\n`;
-    csvContent += `Total Resources,${stats.total}\n`;
-    csvContent += `Active,${stats.active}\n`;
-    csvContent += `Out of Service,${stats.outOfService}\n`;
-    csvContent += `Maintenance,${stats.maintenance}\n`;
-    csvContent += `\n--- BY TYPE ---\n`;
-    csvContent += `Type,Count\n`;
-    stats.byType.forEach((item) => {
-      csvContent += `${item.type},${item.count}\n`;
+  const stats = reportGenerated ? {
+    total:      filteredResources.length,
+    active:     filteredResources.filter(r => r.status === "ACTIVE").length,
+    outOfSvc:   filteredResources.filter(r => r.status === "OUT_OF_SERVICE").length,
+    maintenance:filteredResources.filter(r => r.status === "MAINTENANCE").length,
+    byType:     TYPE_OPTIONS.map(t => ({ type: t, count: filteredResources.filter(r => r.type === t).length })),
+  } : null;
+
+  const exportCSV = () => {
+    let csv = "Campus Resource Management Report\n";
+    csv += `Generated: ${new Date().toLocaleString()}\n\n--- SUMMARY ---\n`;
+    csv += `Total,${stats.total}\nActive,${stats.active}\nOut of Service,${stats.outOfSvc}\nMaintenance,${stats.maintenance}\n`;
+    csv += `\n--- BY TYPE ---\nType,Count\n`;
+    stats.byType.forEach(i => { csv += `${i.type},${i.count}\n`; });
+    csv += `\n--- RESOURCES ---\nID,Name,Type,Status,Location,Capacity\n`;
+    filteredResources.forEach(r => {
+      csv += `${r.id},"${r.name}","${r.type}","${r.status}","${r.location||'N/A'}",${r.capacity||'N/A'}\n`;
     });
-    csvContent += `\n--- DETAILED RESOURCES ---\n`;
-    csvContent += "ID,Name,Type,Status,Location,Capacity\n";
-    filteredResources.forEach((resource) => {
-      csvContent += `${resource.id},"${resource.name}","${resource.type}","${resource.status}","${resource.location || 'N/A'}",${resource.capacity || 'N/A'}\n`;
-    });
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `resource-report-${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    a.download = `resource-report-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
   };
 
-  const exportAsPDF = () => {
-    const stats = getReportStats();
-    const printWindow = window.open("", "", "height=600,width=800");
-    const htmlContent = `
-      <html>
-        <head>
-          <title>Campus Resource Management Report</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h1 { color: #059669; border-bottom: 3px solid #059669; padding-bottom: 10px; }
-            h2 { color: #047857; margin-top: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f3f4f6; font-weight: bold; }
-            .summary { background-color: #f0fdf4; padding: 15px; border-radius: 5px; margin-top: 10px; }
-            .stat { display: inline-block; margin-right: 30px; }
-            .stat-label { font-weight: bold; color: #059669; }
-            .stat-value { font-size: 24px; color: #059669; }
-            .timestamp { color: #999; font-size: 12px; margin-top: 20px; }
-          </style>
-        </head>
-        <body>
-          <h1>Campus Resource Management Report</h1>
-          <div class="timestamp">Generated: ${new Date().toLocaleString()}</div>
-          
-          <div class="summary">
-            <h2>Summary</h2>
-            <div class="stat">
-              <div class="stat-label">Total Resources</div>
-              <div class="stat-value">${stats.total}</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Active</div>
-              <div class="stat-value">${stats.active}</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Out of Service</div>
-              <div class="stat-value">${stats.outOfService}</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Maintenance</div>
-              <div class="stat-value">${stats.maintenance}</div>
-            </div>
-          </div>
-
-          <h2>Resources by Type</h2>
-          <table>
-            <tr>
-              <th>Type</th>
-              <th>Count</th>
-            </tr>
-            ${stats.byType.map((item) => `
-              <tr>
-                <td>${item.type}</td>
-                <td>${item.count}</td>
-              </tr>
-            `).join('')}
-          </table>
-
-          <h2>Detailed Resources</h2>
-          <table>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Location</th>
-              <th>Capacity</th>
-            </tr>
-            ${filteredResources.map((resource) => `
-              <tr>
-                <td>${resource.id}</td>
-                <td>${resource.name}</td>
-                <td>${resource.type}</td>
-                <td>${resource.status}</td>
-                <td>${resource.location || 'N/A'}</td>
-                <td>${resource.capacity || 'N/A'}</td>
-              </tr>
-            `).join('')}
-          </table>
-        </body>
-      </html>
-    `;
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
+  const exportPDF = () => {
+    const w = window.open("", "", "height=700,width=900");
+    w.document.write(`<html><head><title>Resource Report</title>
+      <style>
+        body{font-family:Arial,sans-serif;margin:24px;color:#1e293b}
+        h1{color:#0d9488;border-bottom:3px solid #0d9488;padding-bottom:8px}
+        h2{color:#0f766e;margin-top:24px}
+        table{width:100%;border-collapse:collapse;margin-top:10px}
+        th,td{border:1px solid #e2e8f0;padding:8px 12px;text-align:left}
+        th{background:#f0fdfa;font-weight:700;color:#0f766e}
+        .summary{display:flex;gap:32px;background:#f0fdfa;padding:16px;border-radius:8px;margin-top:12px}
+        .stat{text-align:center}.stat-label{font-size:12px;color:#64748b;font-weight:600}
+        .stat-value{font-size:28px;font-weight:800;color:#0d9488}
+        .ts{color:#94a3b8;font-size:12px;margin-top:4px}
+        .badge-active{color:#16a34a}.badge-out{color:#e11d48}.badge-maint{color:#d97706}
+      </style></head><body>
+      <h1>Campus Resource Management Report</h1>
+      <p class="ts">Generated: ${new Date().toLocaleString()}</p>
+      <h2>Summary</h2>
+      <div class="summary">
+        <div class="stat"><div class="stat-label">Total</div><div class="stat-value">${stats.total}</div></div>
+        <div class="stat"><div class="stat-label">Active</div><div class="stat-value" style="color:#16a34a">${stats.active}</div></div>
+        <div class="stat"><div class="stat-label">Out of Service</div><div class="stat-value" style="color:#e11d48">${stats.outOfSvc}</div></div>
+        <div class="stat"><div class="stat-label">Maintenance</div><div class="stat-value" style="color:#d97706">${stats.maintenance}</div></div>
+      </div>
+      <h2>By Type</h2>
+      <table><tr><th>Type</th><th>Count</th></tr>
+        ${stats.byType.map(i => `<tr><td>${fmt(i.type)}</td><td>${i.count}</td></tr>`).join("")}
+      </table>
+      <h2>Resources (${filteredResources.length})</h2>
+      <table><tr><th>Name</th><th>Type</th><th>Status</th><th>Location</th><th>Capacity</th></tr>
+        ${filteredResources.map(r => `<tr>
+          <td><strong>${r.name}</strong></td>
+          <td>${fmt(r.type)}</td>
+          <td class="badge-${r.status==="ACTIVE"?"active":r.status==="OUT_OF_SERVICE"?"out":"maint"}">${fmt(r.status)}</td>
+          <td>${r.location||"N/A"}</td><td>${r.capacity||"N/A"}</td>
+        </tr>`).join("")}
+      </table>
+      </body></html>`);
+    w.document.close();
+    w.focus();
+    w.print();
   };
 
-  const resetFilters = () => {
-    setSelectedType("ALL");
-    setSelectedStatus("ALL");
-    setDateFrom("");
-    setDateTo("");
-    setReportGenerated(false);
-    setFilteredResources([]);
+  /* ── Styles ── */
+  const card = {
+    background: "#fff", borderRadius: 14, padding: "20px 24px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
   };
-
-  const stats = reportGenerated ? getReportStats() : null;
+  const label = { fontSize: 12, fontWeight: 600, color: "#64748b", marginBottom: 5, display: "block" };
+  const input = {
+    width: "100%", padding: "9px 12px", border: "1.5px solid #e2e8f0",
+    borderRadius: 8, fontSize: 13, outline: "none", background: "#fff",
+    boxSizing: "border-box",
+  };
 
   return (
-    <div className="m1-page m1-report-shell">
-      <section className="m1-report-hero m1-card-lg">
+    <div style={{ display: "flex", flexDirection: "column", gap: 22, paddingBottom: 32 }}>
+
+      {/* ── Header ── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <div>
-          <p className="m1-hero-badge">
-            <span className="m1-hero-badge-dot" />
-            Report Generator
+          <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#0d9488" }}>
+            Resource Manager
           </p>
-          <h2 className="m1-page-title">Generate Report</h2>
-          <p className="m1-page-sub">Create customized resource management reports.</p>
+          <h2 style={{ margin: "4px 0 4px", fontSize: 24, fontWeight: 800, color: "#0f172a" }}>Generate Report</h2>
+          <p style={{ margin: 0, fontSize: 13, color: "#64748b" }}>
+            Filter resources and export a summarised report as CSV or PDF
+          </p>
         </div>
-      </section>
+        <button onClick={() => setCurrentPage("dashboard")} style={{
+          background: "#f0fdfa", border: "1px solid #99f6e4", borderRadius: 8,
+          padding: "8px 16px", fontSize: 12, fontWeight: 600, color: "#0d9488", cursor: "pointer",
+        }}>
+          ← Back to Dashboard
+        </button>
+      </div>
 
-      {error && <div className="m1-alert error">{error}</div>}
+      {error && (
+        <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, padding: "10px 16px", color: "#b91c1c", fontSize: 13 }}>
+          ⚠ {error}
+        </div>
+      )}
 
-      {/* Filters Section */}
-      <section className="m1-report-filters m1-card-lg">
-        <h3 className="m1-section-title">Report Filters</h3>
-        
-        <div className="m1-filter-grid">
-          {/* Type Filter */}
-          <div className="m1-filter-group">
-            <label htmlFor="typeFilter" className="m1-filter-label">
-              Resource Type
-            </label>
-            <select
-              id="typeFilter"
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="m1-filter-select"
-            >
+      {/* ── Filters ── */}
+      <div style={card}>
+        <h3 style={{ margin: "0 0 16px", fontSize: 14, fontWeight: 700, color: "#1e293b" }}>Report Filters</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
+          <div>
+            <span style={label}>Resource Type</span>
+            <select value={selectedType} onChange={e => setSelectedType(e.target.value)} style={input}>
               <option value="ALL">All Types</option>
-              {typeOptions.map((type) => (
-                <option key={type} value={type}>
-                  {type.replace(/_/g, " ")}
-                </option>
-              ))}
+              {TYPE_OPTIONS.map(t => <option key={t} value={t}>{fmt(t)}</option>)}
             </select>
           </div>
-
-          {/* Status Filter */}
-          <div className="m1-filter-group">
-            <label htmlFor="statusFilter" className="m1-filter-label">
-              Status
-            </label>
-            <select
-              id="statusFilter"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="m1-filter-select"
-            >
+          <div>
+            <span style={label}>Status</span>
+            <select value={selectedStatus} onChange={e => setSelectedStatus(e.target.value)} style={input}>
               <option value="ALL">All Statuses</option>
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>
-                  {status.replace(/_/g, " ")}
-                </option>
-              ))}
+              {STATUS_OPTIONS.map(s => <option key={s} value={s}>{fmt(s)}</option>)}
             </select>
           </div>
-
-          {/* Date From */}
-          <div className="m1-filter-group">
-            <label htmlFor="dateFrom" className="m1-filter-label">
-              From Date
-            </label>
-            <input
-              id="dateFrom"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="m1-filter-input"
-            />
+          <div>
+            <span style={label}>From Date</span>
+            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={input} />
           </div>
-
-          {/* Date To */}
-          <div className="m1-filter-group">
-            <label htmlFor="dateTo" className="m1-filter-label">
-              To Date
-            </label>
-            <input
-              id="dateTo"
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="m1-filter-input"
-            />
+          <div>
+            <span style={label}>To Date</span>
+            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} style={input} />
           </div>
         </div>
-
-        <div className="m1-filter-actions">
-          <button
-            className="m1-btn-primary"
-            onClick={generateReport}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Generate Report"}
+        <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+          <button onClick={generateReport} disabled={loading} style={{
+            background: "#0d9488", color: "#fff", border: "none",
+            borderRadius: 8, padding: "9px 20px", fontWeight: 700,
+            fontSize: 13, cursor: "pointer",
+            boxShadow: "0 2px 8px rgba(13,148,136,0.3)",
+          }}>
+            {loading ? "Loading…" : "Generate Report"}
           </button>
-          <button
-            className="m1-btn-secondary"
-            onClick={resetFilters}
-            disabled={!reportGenerated}
-          >
-            Reset Filters
-          </button>
+          {reportGenerated && (
+            <button onClick={reset} style={{
+              background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0",
+              borderRadius: 8, padding: "9px 20px", fontWeight: 600, fontSize: 13, cursor: "pointer",
+            }}>
+              Reset
+            </button>
+          )}
         </div>
-      </section>
+      </div>
 
-      {/* Report Results */}
+      {/* ── Results ── */}
       {reportGenerated && stats && (
         <>
-          {/* Summary Stats */}
-          <section className="m1-report-summary">
-            <h3 className="m1-section-title">Summary</h3>
-            <div className="m1-stats-grid m1-report-stats">
-              <div className="m1-card m1-report-stat-card" style={{ "--m1-delay": "0ms" }}>
-                <p className="m1-stat-label">Total Resources</p>
-                <p className="m1-stat-value">{stats.total}</p>
+          {/* Summary cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 14 }}>
+            {[
+              { label: "Total",        value: stats.total,       color: "#0d9488" },
+              { label: "Active",       value: stats.active,      color: "#16a34a" },
+              { label: "Out of Svc",   value: stats.outOfSvc,    color: "#e11d48" },
+              { label: "Maintenance",  value: stats.maintenance, color: "#d97706" },
+            ].map(s => (
+              <div key={s.label} style={{ ...card, borderTop: `4px solid ${s.color}`, padding: "14px 18px" }}>
+                <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#64748b" }}>{s.label}</p>
+                <p style={{ margin: 0, fontSize: 30, fontWeight: 800, color: s.color, lineHeight: 1 }}>{s.value}</p>
               </div>
-              <div className="m1-card m1-report-stat-card" style={{ "--m1-delay": "70ms" }}>
-                <p className="m1-stat-label">Active</p>
-                <p className="m1-stat-value emerald">{stats.active}</p>
-              </div>
-              <div className="m1-card m1-report-stat-card" style={{ "--m1-delay": "140ms" }}>
-                <p className="m1-stat-label">Out of Service</p>
-                <p className="m1-stat-value amber">{stats.outOfService}</p>
-              </div>
-              <div className="m1-card m1-report-stat-card" style={{ "--m1-delay": "210ms" }}>
-                <p className="m1-stat-label">Maintenance</p>
-                <p className="m1-stat-value blue">{stats.maintenance}</p>
-              </div>
-            </div>
-          </section>
+            ))}
+          </div>
 
-          {/* By Type */}
-          <section className="m1-report-bytype">
-            <h3 className="m1-section-title">Resources by Type</h3>
-            <div className="m1-type-grid m1-report-grid">
-              {stats.byType.map((item, index) => (
-                <div
-                  key={item.type}
-                  className="m1-card m1-report-type-card"
-                  style={{ "--m1-delay": `${index * 70}ms` }}
-                >
-                  <p className="m1-type-label">{item.type.replace(/_/g, " ")}</p>
-                  <p className="m1-type-count">{item.count}</p>
+          {/* By type */}
+          <div style={card}>
+            <h3 style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#1e293b" }}>By Type</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
+              {stats.byType.map(i => (
+                <div key={i.type} style={{ background: "#f8fafc", borderRadius: 10, padding: "12px 16px", border: "1px solid #e2e8f0" }}>
+                  <p style={{ margin: "0 0 4px", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#64748b" }}>{fmt(i.type)}</p>
+                  <p style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#0d9488" }}>{i.count}</p>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          {/* Detailed Resources Table */}
-          <section className="m1-report-table">
-            <h3 className="m1-section-title">Detailed Resources ({filteredResources.length})</h3>
-            <div className="m1-table-container">
-              {filteredResources.length > 0 ? (
-                <table className="m1-data-table">
+          {/* Table */}
+          <div style={card}>
+            <h3 style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#1e293b" }}>
+              Resources ({filteredResources.length})
+            </h3>
+            {filteredResources.length > 0 ? (
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Status</th>
-                      <th>Location</th>
-                      <th>Capacity</th>
+                    <tr style={{ background: "#f8fafc" }}>
+                      {["Name", "Type", "Status", "Location", "Capacity"].map(h => (
+                        <th key={h} style={{
+                          padding: "9px 14px", textAlign: "left",
+                          fontSize: 10, fontWeight: 700, textTransform: "uppercase",
+                          letterSpacing: "0.06em", color: "#64748b",
+                          borderBottom: "2px solid #e2e8f0",
+                        }}>{h}</th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredResources.map((resource) => (
-                      <tr key={resource.id}>
-                        <td>{resource.id}</td>
-                        <td>{resource.name}</td>
-                        <td>{resource.type.replace(/_/g, " ")}</td>
-                        <td>
-                          <span className={`m1-status-badge status-${resource.status.toLowerCase().replace(/_/g, "-")}`}>
-                            {resource.status.replace(/_/g, " ")}
-                          </span>
+                    {filteredResources.map(r => (
+                      <tr key={r.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "10px 14px", fontWeight: 600, color: "#0f172a" }}>{r.name}</td>
+                        <td style={{ padding: "10px 14px", color: "#475569" }}>{fmt(r.type)}</td>
+                        <td style={{ padding: "10px 14px" }}>
+                          <span style={{
+                            borderRadius: 20, padding: "2px 10px", fontSize: 11, fontWeight: 700,
+                            background: r.status === "ACTIVE" ? "#f0fdf4" : r.status === "OUT_OF_SERVICE" ? "#fef2f2" : "#fffbeb",
+                            color:      r.status === "ACTIVE" ? "#16a34a" : r.status === "OUT_OF_SERVICE" ? "#e11d48" : "#d97706",
+                          }}>{fmt(r.status)}</span>
                         </td>
-                        <td>{resource.location || "N/A"}</td>
-                        <td>{resource.capacity || "N/A"}</td>
+                        <td style={{ padding: "10px 14px", color: "#475569" }}>{r.location || "N/A"}</td>
+                        <td style={{ padding: "10px 14px", color: "#475569" }}>{r.capacity || "N/A"}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              ) : (
-                <p className="m1-no-data">No resources match the selected filters.</p>
-              )}
-            </div>
-          </section>
+              </div>
+            ) : (
+              <p style={{ color: "#94a3b8", fontSize: 13, textAlign: "center", padding: "24px 0" }}>
+                No resources match the selected filters.
+              </p>
+            )}
+          </div>
 
-          {/* Export Options */}
-          <section className="m1-report-exports">
-            <h3 className="m1-section-title">Export Report</h3>
-            <div className="m1-export-actions">
-              <button
-                className="m1-btn-export m1-btn-export-csv"
-                onClick={exportAsCSV}
-              >
-                📊 Export as CSV
-              </button>
-              <button
-                className="m1-btn-export m1-btn-export-pdf"
-                onClick={exportAsPDF}
-              >
-                📄 Print / Export as PDF
-              </button>
-            </div>
-          </section>
+          {/* Export */}
+          <div style={{ ...card, display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: "#475569" }}>Export report:</span>
+            <button onClick={exportCSV} style={{
+              background: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0",
+              borderRadius: 8, padding: "9px 18px", fontWeight: 700, fontSize: 13, cursor: "pointer",
+            }}>
+              📊 Export CSV
+            </button>
+            <button onClick={exportPDF} style={{
+              background: "#eff6ff", color: "#2563eb", border: "1px solid #bfdbfe",
+              borderRadius: 8, padding: "9px 18px", fontWeight: 700, fontSize: 13, cursor: "pointer",
+            }}>
+              📄 Print / PDF
+            </button>
+          </div>
         </>
-      )}
-
-      {reportGenerated && stats && stats.total === 0 && (
-        <div className="m1-alert info">
-          No resources found matching the selected filters. Try adjusting your filters.
-        </div>
       )}
     </div>
   );
 }
-
-export default GenerateReport;
