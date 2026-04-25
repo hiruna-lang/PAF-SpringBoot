@@ -84,6 +84,36 @@ export function savePhoto(dataUrl) {
 }
 
 /**
+ * Update profile name and/or phone number.
+ * Refreshes localStorage with the new token returned by the server.
+ */
+export async function updateProfile({ name, phoneNumber }) {
+  const res = await authFetch("http://localhost:8081/api/profile/update", {
+    method: "PUT",
+    body: JSON.stringify({ name, phoneNumber }),
+  });
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Failed to update profile");
+  saveAuth(result);   // refresh localStorage with new name + token
+  return result;
+}
+
+/**
+ * Permanently delete the current user's account.
+ * Clears localStorage after success.
+ */
+export async function deleteAccount() {
+  const res = await authFetch("http://localhost:8081/api/profile/delete", {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const result = await res.json().catch(() => ({}));
+    throw new Error(result.message || "Failed to delete account");
+  }
+  logout();
+}
+
+/**
  * Save photo to backend DB — persists across logout/login
  * Returns updated AuthResponse so we can refresh localStorage
  */
