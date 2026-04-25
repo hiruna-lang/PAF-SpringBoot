@@ -41,13 +41,17 @@ function ResourceDashboard({ setCurrentPage }) {
   }, [resources]);
 
   return (
-    <div className="m1-page">
-      <div className="m1-page-header">
+    <div className="m1-page m1-dashboard-shell">
+      <section className="m1-dashboard-hero m1-card-lg">
         <div>
+          <p className="m1-hero-badge">
+            <span className="m1-hero-badge-dot" />
+            Campus Resource Center
+          </p>
           <h2 className="m1-page-title">Dashboard</h2>
           <p className="m1-page-sub">Snapshot of campus resources and availability.</p>
         </div>
-        <div className="m1-btn-group">
+        <div className="m1-btn-group m1-dashboard-actions">
           <button className="m1-btn-primary" onClick={() => setCurrentPage("create")}>
             Create Resource
           </button>
@@ -55,7 +59,7 @@ function ResourceDashboard({ setCurrentPage }) {
             View Resources
           </button>
         </div>
-      </div>
+      </section>
 
       <div className="m1-meta">
         <span>
@@ -71,16 +75,16 @@ function ResourceDashboard({ setCurrentPage }) {
 
       {error && <div className="m1-alert error">{error}</div>}
 
-      <div className="m1-stats-grid">
-        <div className="m1-card">
+      <div className="m1-stats-grid m1-dashboard-grid">
+        <div className="m1-card m1-dashboard-card" style={{ "--m1-delay": "0ms" }}>
           <p className="m1-stat-label">Total</p>
           <p className="m1-stat-value">{loading ? "..." : totals.total}</p>
         </div>
-        <div className="m1-card">
+        <div className="m1-card m1-dashboard-card" style={{ "--m1-delay": "70ms" }}>
           <p className="m1-stat-label">Active</p>
           <p className="m1-stat-value emerald">{loading ? "..." : totals.active}</p>
         </div>
-        <div className="m1-card">
+        <div className="m1-card m1-dashboard-card" style={{ "--m1-delay": "140ms" }}>
           <p className="m1-stat-label">Out of Service</p>
           <p className="m1-stat-value amber">{loading ? "..." : totals.outOfService}</p>
         </div>
@@ -88,9 +92,13 @@ function ResourceDashboard({ setCurrentPage }) {
 
       <div>
         <h3 className="m1-section-title">By Type</h3>
-        <div className="m1-type-grid">
-          {totals.byType.map((item) => (
-            <div key={item.type} className="m1-card">
+        <div className="m1-type-grid m1-dashboard-grid">
+          {totals.byType.map((item, index) => (
+            <div
+              key={item.type}
+              className="m1-card m1-dashboard-card"
+              style={{ "--m1-delay": `${170 + index * 70}ms` }}
+            >
               <p className="m1-stat-label">{item.type}</p>
               <p className="m1-type-value">{loading ? "..." : item.count}</p>
             </div>

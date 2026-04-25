@@ -1,13 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
 
 .rl-page {
+  --rl-campus-bg-image: url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=2400&q=80');
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 32%),
-    radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 28%),
-    linear-gradient(180deg, #f8fffe 0%, #f4f9ff 45%, #f8fafc 100%);
   font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
   color: #0f172a;
+}
+
+.rl-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.58) 52%, rgba(255, 255, 255, 0.18) 78%),
+    var(--rl-campus-bg-image);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transform: scale(1.03);
+}
+
+.rl-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 14%, rgba(34, 197, 94, 0.12), transparent 35%),
+    radial-gradient(circle at 88% 12%, rgba(15, 118, 110, 0.12), transparent 30%),
+    linear-gradient(180deg, rgba(248, 255, 252, 0.35), rgba(248, 250, 252, 0.72));
 }
 
 .rl-nav {
@@ -162,6 +188,14 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 28px 24px 56px;
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 24px 54px rgba(15, 23, 42, 0.1);
+  margin-top: 20px;
+  margin-bottom: 28px;
 }
 
 .rl-hero {
@@ -374,6 +408,8 @@
   align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -1175,6 +1211,8 @@
 
   .rl-container {
     padding: 18px 16px 40px;
+    border-radius: 24px;
+    margin-top: 14px;
   }
 
   .rl-hero-copy,
@@ -1206,5 +1244,14 @@
   .rl-bm-btn-cancel,
   .rl-bm-btn-submit {
     width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .rl-page::before {
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.72) 34%, rgba(255, 255, 255, 0.46) 58%, rgba(255, 255, 255, 0.2) 100%),
+      var(--rl-campus-bg-image);
+    background-position: 62% center;
   }
 }
