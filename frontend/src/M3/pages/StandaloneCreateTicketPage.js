@@ -111,7 +111,7 @@ function CreateTicketContent() {
           <button
             className="sct-nav-icon-btn sct-nav-profile-btn"
             type="button"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/m4/dashboard?tab=profile")}
             aria-label="Profile"
             title="Profile"
           >
